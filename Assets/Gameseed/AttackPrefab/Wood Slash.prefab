@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3303826108582693412}
   - component: {fileID: 567927417882562}
   - component: {fileID: 710114779612414996}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,9 +94,9 @@ GameObject:
   - component: {fileID: 3329538891666614543}
   - component: {fileID: 8019992738615131041}
   - component: {fileID: 7444398147419613147}
-  m_Layer: 3
+  m_Layer: 10
   m_Name: Wood Slash
-  m_TagString: Player
+  m_TagString: Player Attack
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -130,11 +130,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   onActive: 0
-  IdAtkObject: 0
-  damageValue: 0
+  nameAtk: 
+  damageValue: 3
   timeDisapear: 0.5
+  forwardDirection: {x: 0, y: 0, z: 0}
   forceForward: 0
-  forcePush: 0
+  forcePush: 5
+  isPenetration: 0
 --- !u!65 &7444398147419613147
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -167,7 +169,7 @@ GameObject:
   - component: {fileID: 6194306729189525308}
   - component: {fileID: 6226426940450625065}
   - component: {fileID: 6063470218800166166}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Cube (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -218,7 +220,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 8cc41dacd12329d419b9bf4bd736b0dc, type: 2}
+  - {fileID: 2100000, guid: 30840e12d7b871e4f934056aaae5c943, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

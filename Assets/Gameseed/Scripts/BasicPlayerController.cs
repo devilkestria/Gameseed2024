@@ -146,18 +146,26 @@ public class BasicPlayerController : MonoBehaviour
     [FoldoutGroup("Player Movement")] public float MoveSpeed = 5.0f;
     [Tooltip("How fast the character turns to face movement direction")]
     [FoldoutGroup("Player Movement")] public float RotateOnMove = 360f;
+    [FoldoutGroup("Player Movement")][SerializeField] private Transform transCamera;
     private void PlayerMove()
     {
         Vector2 inputmove = moveAction.ReadValue<Vector2>();
-        Vector3 v3Move = new Vector3(inputmove.x, 0, inputmove.y);
+        Vector3 moveDirection = new Vector3(inputmove.x, 0, inputmove.y);
+        Vector3 movement = transform.forward * moveDirection.magnitude * MoveSpeed * Time.deltaTime;
         if (inputmove != Vector2.zero)
         {
-            var relative = transform.position + v3Move.ToIso() - transform.position;
+            Vector3 camrot = new Vector3(0, transCamera.rotation.eulerAngles.y, 0);
+            var relative = transform.position + moveDirection.ToIso(camrot) - transform.position;
             var rot = Quaternion.LookRotation(relative, Vector3.up);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, rot, RotateOnMove * Time.deltaTime);
+
+            // Slope Fix
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position - (GroundedOffset * Vector3.up), Vector3.down, out hit, 0.2f))
+                movement = Vector3.ProjectOnPlane(movement, hit.normal);
         }
         //Move Position
-        rb.MovePosition(transform.position + v3Move.magnitude * transform.forward * MoveSpeed * Time.deltaTime);
+        rb.MovePosition(transform.position + movement);
         if (_hasAnimator) _animator.SetFloat(_animIDSpeed, rb.velocity.magnitude);
     }
     #endregion
@@ -224,102 +232,102 @@ public class BasicPlayerController : MonoBehaviour
 
     #region Attacking
 
-[FoldoutGroup("Attack")][SerializeField] private AttackObject prefabAttack;
-[FoldoutGroup("Attack")] private AttackObject currentAttack;
-[FoldoutGroup("Attack")][SerializeField] private float timePrepareAttack;
-[FoldoutGroup("Attack")][SerializeField] private float timeFinishAttack;
-[FoldoutGroup("Attack")][SerializeField] private Transform transAttackPoint;
-[FoldoutGroup("Attack")] private List<AttackObject> listAttack = new List<AttackObject>();
+    [FoldoutGroup("Attack")][SerializeField] private AttackObject prefabAttack;
+    [FoldoutGroup("Attack")] private AttackObject currentAttack;
+    [FoldoutGroup("Attack")][SerializeField] private float timePrepareAttack;
+    [FoldoutGroup("Attack")][SerializeField] private float timeFinishAttack;
+    [FoldoutGroup("Attack")][SerializeField] private Transform transAttackPoint;
+    [FoldoutGroup("Attack")] private List<AttackObject> listAttack = new List<AttackObject>();
 
-private WaitForSeconds wfsTimePrepareAttack;
-private WaitForSeconds wfsTimeFinishAttack;
-private Coroutine corouTempAttack;
+    private WaitForSeconds wfsTimePrepareAttack;
+    private WaitForSeconds wfsTimeFinishAttack;
+    private Coroutine corouTempAttack;
 
-public void OnChangeAttack(AttackObject atk, float prepareTime, float finishTime)
-{
-    SetAttack(atk, prepareTime, finishTime);
-}
-
-public void OnTemporaryChangeAttack(AttackObject atk, float prepareTime, float finishTime, float temporaryTime)
-{
-    if (corouTempAttack != null)
+    public void OnChangeAttack(AttackObject atk, float prepareTime, float finishTime)
     {
-        StopCoroutine(corouTempAttack);
-    }
-    corouTempAttack = StartCoroutine(TemporaryChangeAttack(atk, prepareTime, finishTime, temporaryTime));
-}
-
-private IEnumerator TemporaryChangeAttack(AttackObject atk, float prepareTime, float finishTime, float temporaryTime)
-{
-    AttackObject originalAttack = prefabAttack;
-    float originalPrepareTime = timePrepareAttack;
-    float originalFinishTime = timeFinishAttack;
-
-    SetAttack(atk, prepareTime, finishTime);
-
-    yield return new WaitForSeconds(temporaryTime);
-
-    SetAttack(originalAttack, originalPrepareTime, originalFinishTime);
-}
-
-private void SetAttack(AttackObject atk, float prepareTime, float finishTime)
-{
-    prefabAttack = atk;
-    currentAttack = atk;
-    timePrepareAttack = prepareTime;
-    timeFinishAttack = finishTime;
-    wfsTimePrepareAttack = new WaitForSeconds(timePrepareAttack);
-    wfsTimeFinishAttack = new WaitForSeconds(timeFinishAttack);
-}
-
-private void Attacking()
-{
-    if (currentAttack != null)
-    {
-        StartCoroutine(PerformAttack());
-    }
-}
-
-private IEnumerator PerformAttack()
-{
-    playerState = PlayerState.PlayerAttack;
-    rb.velocity = Vector3.zero;
-
-    if (_hasAnimator)
-    {
-        _animator.SetTrigger(_animIDAttack);
+        SetAttack(atk, prepareTime, finishTime);
     }
 
-    yield return wfsTimePrepareAttack;
-
-    AttackObject attack = GetAvailableAttackObject();
-    if (attack == null)
+    public void OnTemporaryChangeAttack(AttackObject atk, float prepareTime, float finishTime, float temporaryTime)
     {
-        GameObject attackInstance = Instantiate(currentAttack.gameObject, transAttackPoint.position, transAttackPoint.rotation);
-        attack = attackInstance.GetComponent<AttackObject>();
-        listAttack.Add(attack);
-    }
-
-    attack.transform.SetPositionAndRotation(transAttackPoint.position, transAttackPoint.rotation);
-    attack.gameObject.SetActive(true);
-
-    yield return wfsTimeFinishAttack;
-
-    playerState = PlayerState.PlayerMoving;
-}
-
-private AttackObject GetAvailableAttackObject()
-{
-    foreach (var attack in listAttack)
-    {
-        if (!attack.onActive && attack.nameAtk == currentAttack.nameAtk)
+        if (corouTempAttack != null)
         {
-            return attack;
+            StopCoroutine(corouTempAttack);
+        }
+        corouTempAttack = StartCoroutine(TemporaryChangeAttack(atk, prepareTime, finishTime, temporaryTime));
+    }
+
+    private IEnumerator TemporaryChangeAttack(AttackObject atk, float prepareTime, float finishTime, float temporaryTime)
+    {
+        AttackObject originalAttack = prefabAttack;
+        float originalPrepareTime = timePrepareAttack;
+        float originalFinishTime = timeFinishAttack;
+
+        SetAttack(atk, prepareTime, finishTime);
+
+        yield return new WaitForSeconds(temporaryTime);
+
+        SetAttack(originalAttack, originalPrepareTime, originalFinishTime);
+    }
+
+    private void SetAttack(AttackObject atk, float prepareTime, float finishTime)
+    {
+        prefabAttack = atk;
+        currentAttack = atk;
+        timePrepareAttack = prepareTime;
+        timeFinishAttack = finishTime;
+        wfsTimePrepareAttack = new WaitForSeconds(timePrepareAttack);
+        wfsTimeFinishAttack = new WaitForSeconds(timeFinishAttack);
+    }
+
+    private void Attacking()
+    {
+        if (currentAttack != null)
+        {
+            StartCoroutine(PerformAttack());
         }
     }
-    return null;
-}
-#endregion
+
+    private IEnumerator PerformAttack()
+    {
+        playerState = PlayerState.PlayerAttack;
+        rb.velocity = Vector3.zero;
+
+        if (_hasAnimator)
+        {
+            _animator.SetTrigger(_animIDAttack);
+        }
+
+        yield return wfsTimePrepareAttack;
+
+        AttackObject attack = GetAvailableAttackObject();
+        if (attack == null)
+        {
+            GameObject attackInstance = Instantiate(currentAttack.gameObject, transAttackPoint.position, transAttackPoint.rotation);
+            attack = attackInstance.GetComponent<AttackObject>();
+            listAttack.Add(attack);
+        }
+
+        attack.transform.SetPositionAndRotation(transAttackPoint.position, transAttackPoint.rotation);
+        attack.gameObject.SetActive(true);
+
+        yield return wfsTimeFinishAttack;
+
+        playerState = PlayerState.PlayerMoving;
+    }
+
+    private AttackObject GetAvailableAttackObject()
+    {
+        foreach (var attack in listAttack)
+        {
+            if (!attack.onActive && attack.nameAtk == currentAttack.nameAtk)
+            {
+                return attack;
+            }
+        }
+        return null;
+    }
+    #endregion
 
     #region Interact
     [FoldoutGroup("Interact")][SerializeField] private float interactRadius;

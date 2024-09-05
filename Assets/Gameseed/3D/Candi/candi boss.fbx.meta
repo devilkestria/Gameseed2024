@@ -1,9 +1,14 @@
 fileFormatVersion: 2
-guid: 4d08ef7e64735d24689a33b4ec9614f0
+guid: 8132e116e05dc3a45b932d94aa219d07
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: xy chandi
+    second: {fileID: 2100000, guid: 9f41749b9089d9545a8e4ba73732f8dd, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

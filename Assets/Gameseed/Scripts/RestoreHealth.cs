@@ -8,9 +8,12 @@ public class RestoreHealth : MonoBehaviour
 {
     [FoldoutGroup("Restore Health")][SerializeField] float healthPoint = 5;
     [FoldoutGroup("Restore Health")] public bool onActive;
-
     [FoldoutGroup("Restore Health")][SerializeField] float overalapRadius;
     [FoldoutGroup("Restore Health")][SerializeField] LayerMask layerOverlap;
+    [FoldoutGroup("Restore Helath")] public Rigidbody rb;
+    private void Awake() {
+        if(!rb) rb = GetComponent<Rigidbody>();
+    }
     private void OnEnable()
     {
         onActive = true;

@@ -1,57 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &453780486182737677
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 7022220391294648636}
-  - component: {fileID: 8215584743032535801}
-  m_Layer: 0
-  m_Name: ShowInteract
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &7022220391294648636
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 453780486182737677}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 5295194543838880197}
-  m_Father: {fileID: 2011887712867792695}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8215584743032535801
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 453780486182737677}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 96e8978b5c588024e8716e45f5b31815, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  interactRadius: 1
-  interactDistance: 2
-  interactLayer:
-    serializedVersion: 2
-    m_Bits: 8
-  objInfoInteract: {fileID: 5196668048792578192}
-  offsetSpherecast: {x: 0.75, y: 0, z: 0}
 --- !u!1 &5139985922855580408
 GameObject:
   m_ObjectHideFlags: 0
@@ -62,7 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 2011887712867792695}
   - component: {fileID: 5038997170341457933}
+  - component: {fileID: 404831579988914618}
   - component: {fileID: 5476960333652449375}
+  - component: {fileID: 4959763309386949534}
   m_Layer: 9
   m_Name: Interaction Board
   m_TagString: Untagged
@@ -85,7 +35,7 @@ Transform:
   m_Children:
   - {fileID: 1613441862167046880}
   - {fileID: 4869691358511905268}
-  - {fileID: 7022220391294648636}
+  - {fileID: 5295194543838880197}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
 --- !u!65 &5038997170341457933
@@ -109,6 +59,79 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 2, z: 0.5}
   m_Center: {x: 0, y: -0.5, z: 0}
+--- !u!114 &404831579988914618
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5139985922855580408}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3fe91dc294731a9428c0941ea7579110, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  complexMaskingMode: 0
+  drawingMode: 1
+  outlineLayer: 0
+  outlineTargets:
+  - IsVisible: 1
+    CutoutMask: 8
+    edgeDilateAmount: 5
+    frontEdgeDilateAmount: 5
+    backEdgeDilateAmount: 5
+    renderer: {fileID: 328378808914344338}
+    SubmeshIndex: 0
+    BoundsMode: 0
+    Bounds:
+      m_Center: {x: 0, y: 0, z: 0}
+      m_Extent: {x: 0.5, y: 0.5, z: 0.5}
+    CutoutThreshold: 0.5
+    CullMode: 2
+    cutoutTextureName: 
+    DilateRenderingMode: 0
+    cutoutTextureIndex: 0
+  - IsVisible: 1
+    CutoutMask: 8
+    edgeDilateAmount: 5
+    frontEdgeDilateAmount: 5
+    backEdgeDilateAmount: 5
+    renderer: {fileID: 4026008665532196122}
+    SubmeshIndex: 0
+    BoundsMode: 0
+    Bounds:
+      m_Center: {x: 0, y: 0, z: 0}
+      m_Extent: {x: 0.5, y: 0.5, z: 0.5}
+    CutoutThreshold: 0.5
+    CullMode: 2
+    cutoutTextureName: 
+    DilateRenderingMode: 0
+    cutoutTextureIndex: 0
+  renderStyle: 2
+  outlineParameters:
+    enabled: 1
+    color: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+    dilateShift: 1
+    blurShift: 1
+    fillPass:
+      shader: {fileID: 0}
+      serializedProperties: []
+  backParameters:
+    enabled: 0
+    color: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+    dilateShift: 1
+    blurShift: 1
+    fillPass:
+      shader: {fileID: 0}
+      serializedProperties: []
+  frontParameters:
+    enabled: 1
+    color: {r: 1, g: 1, b: 1, a: 1}
+    dilateShift: 1
+    blurShift: 1
+    fillPass:
+      shader: {fileID: 0}
+      serializedProperties: []
 --- !u!114 &5476960333652449375
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -124,6 +147,26 @@ MonoBehaviour:
   uiBoard: {fileID: 0}
   sprInfo: {fileID: 0}
   textBoard: Halo namaku Eric yang buat program
+--- !u!114 &4959763309386949534
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5139985922855580408}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96e8978b5c588024e8716e45f5b31815, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlinable: {fileID: 404831579988914618}
+  interactRadius: 1
+  interactDistance: 2
+  interactLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  objInfoInteract: {fileID: 5196668048792578192}
+  offsetSpherecast: {x: 0.75, y: 0, z: 0}
 --- !u!1 &5196668048792578192
 GameObject:
   m_ObjectHideFlags: 0
@@ -135,6 +178,7 @@ GameObject:
   - component: {fileID: 5295194543838880197}
   - component: {fileID: 5768658941193041351}
   - component: {fileID: 7430231743634877704}
+  - component: {fileID: 824649987576178143}
   m_Layer: 0
   m_Name: Icon
   m_TagString: Untagged
@@ -152,10 +196,10 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
   m_LocalPosition: {x: 0, y: 1.25, z: 0}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
+  m_LocalScale: {x: 0.10000001, y: 0.1, z: 0.10000001}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 7022220391294648636}
+  m_Father: {fileID: 2011887712867792695}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &5768658941193041351
 SpriteRenderer:
@@ -221,6 +265,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d3a862fa0257e84b87d773c8aac8e1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &824649987576178143
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5196668048792578192}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 034bc47afcbf5e141a58d5c20b7808e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6104508967952443905
 GameObject:
   m_ObjectHideFlags: 0
@@ -232,7 +288,8 @@ GameObject:
   - component: {fileID: 4869691358511905268}
   - component: {fileID: 986012112551627420}
   - component: {fileID: 4026008665532196122}
-  m_Layer: 0
+  - component: {fileID: 4152817161632107277}
+  m_Layer: 9
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -304,6 +361,18 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &4152817161632107277
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6104508967952443905}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 034bc47afcbf5e141a58d5c20b7808e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8498444920047647435
 GameObject:
   m_ObjectHideFlags: 0
@@ -315,7 +384,8 @@ GameObject:
   - component: {fileID: 1613441862167046880}
   - component: {fileID: 3846651652645488329}
   - component: {fileID: 328378808914344338}
-  m_Layer: 0
+  - component: {fileID: 5039179280436096893}
+  m_Layer: 9
   m_Name: Interaction Reset Restore Health
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -387,3 +457,15 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &5039179280436096893
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8498444920047647435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 034bc47afcbf5e141a58d5c20b7808e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

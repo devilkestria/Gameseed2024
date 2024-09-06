@@ -22,7 +22,7 @@ public class BasicMonster : MonoBehaviour, IDamageable
         originPosition = transform.position;
         wfsTimePrepareAttack = new WaitForSeconds(timePrepareAttack);
         wfsTimeFinishAttack = new WaitForSeconds(timeFinishAttack);
-        wfsTimeOnDamage = new WaitForSeconds(timeFinishAttack);
+        wfsTimeOnDamage = new WaitForSeconds(timeOnDamage);
     }
     private void Start()
     {

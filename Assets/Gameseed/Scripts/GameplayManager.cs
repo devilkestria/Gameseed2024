@@ -18,8 +18,11 @@ public class GameplayManager : MonoBehaviour
     {
         playerObj = player;
     }
+    public List<PlantSeed> listPlantSeed = new List<PlantSeed>();
+    public List<Seed> listSeed = new List<Seed>();
     public List<RestoreHealth> listRestoreHealth = new List<RestoreHealth>();
     public List<PowerUp> listPowerUp = new List<PowerUp>();
+    public List<GameObject> listEffect = new List<GameObject>();
     public UiBoard uiBoard;
     public StorageManagement storageManagement;
 }

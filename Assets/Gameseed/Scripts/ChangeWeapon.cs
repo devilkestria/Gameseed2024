@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using EPOOutline;
 using Sirenix.OdinInspector;
 using UnityEngine;
-
+[RequireComponent(typeof(Outlinable))]
 public class ChangeWeapon : MonoBehaviour, IInteractable
 {
     [FoldoutGroup("Change Weapon")][SerializeField] private AttackObject attackObject;
@@ -12,8 +13,10 @@ public class ChangeWeapon : MonoBehaviour, IInteractable
     [FoldoutGroup("Show Interact")][SerializeField] private float interactRadius;
     [FoldoutGroup("Show Interact")][SerializeField] private LayerMask layerInteract;
     [FoldoutGroup("Show Interact")][SerializeField] private GameObject objInteract;
+    [FoldoutGroup("Show Interact")][SerializeField] private Outlinable outlinable;
     private void Start()
     {
+        if (!outlinable) outlinable = GetComponent<Outlinable>();
         if (!playerController) playerController = GameplayManager.instance.playerObj.GetComponent<BasicPlayerController>();
     }
 
@@ -30,10 +33,12 @@ public class ChangeWeapon : MonoBehaviour, IInteractable
         {
             if (colliders[0].CompareTag("Player"))
             {
+                outlinable.enabled = true;
                 objInteract.SetActive(true);
                 return;
             }
         }
+        outlinable.enabled = false;
         objInteract.SetActive(false);
     }
     private void OnDrawGizmos()

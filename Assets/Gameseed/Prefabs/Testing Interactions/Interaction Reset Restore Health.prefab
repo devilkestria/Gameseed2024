@@ -42,7 +42,8 @@ GameObject:
   - component: {fileID: 4268977932292585397}
   - component: {fileID: 8568000185072046747}
   - component: {fileID: 2514093872957520568}
-  m_Layer: 0
+  - component: {fileID: 8208553638475252705}
+  m_Layer: 9
   m_Name: Interaction Reset Restore Health
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -114,6 +115,18 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &8208553638475252705
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3111046506058986160}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 034bc47afcbf5e141a58d5c20b7808e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3216393412561314560
 GameObject:
   m_ObjectHideFlags: 0
@@ -124,7 +137,9 @@ GameObject:
   m_Component:
   - component: {fileID: 6820488125114124277}
   - component: {fileID: 1138717444581010465}
+  - component: {fileID: 8919525741146755382}
   - component: {fileID: 7522218322722121315}
+  - component: {fileID: 5748573314074731271}
   m_Layer: 9
   m_Name: Interaction Reset Restore Health
   m_TagString: Untagged
@@ -147,7 +162,7 @@ Transform:
   m_Children:
   - {fileID: 4268977932292585397}
   - {fileID: 2473605389376677814}
-  - {fileID: 8532067289305449781}
+  - {fileID: 8643098740256712429}
   - {fileID: 5797280517724164653}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
@@ -172,6 +187,79 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 2, z: 0.5}
   m_Center: {x: 0, y: -0.5, z: 0}
+--- !u!114 &8919525741146755382
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3216393412561314560}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3fe91dc294731a9428c0941ea7579110, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  complexMaskingMode: 0
+  drawingMode: 1
+  outlineLayer: 0
+  outlineTargets:
+  - IsVisible: 1
+    CutoutMask: 8
+    edgeDilateAmount: 5
+    frontEdgeDilateAmount: 5
+    backEdgeDilateAmount: 5
+    renderer: {fileID: 2514093872957520568}
+    SubmeshIndex: 0
+    BoundsMode: 0
+    Bounds:
+      m_Center: {x: 0, y: 0, z: 0}
+      m_Extent: {x: 0.5, y: 0.5, z: 0.5}
+    CutoutThreshold: 0.5
+    CullMode: 2
+    cutoutTextureName: 
+    DilateRenderingMode: 0
+    cutoutTextureIndex: 0
+  - IsVisible: 1
+    CutoutMask: 8
+    edgeDilateAmount: 5
+    frontEdgeDilateAmount: 5
+    backEdgeDilateAmount: 5
+    renderer: {fileID: 4257205194076161298}
+    SubmeshIndex: 0
+    BoundsMode: 0
+    Bounds:
+      m_Center: {x: 0, y: 0, z: 0}
+      m_Extent: {x: 0.5, y: 0.5, z: 0.5}
+    CutoutThreshold: 0.5
+    CullMode: 2
+    cutoutTextureName: 
+    DilateRenderingMode: 0
+    cutoutTextureIndex: 0
+  renderStyle: 2
+  outlineParameters:
+    enabled: 1
+    color: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+    dilateShift: 1
+    blurShift: 1
+    fillPass:
+      shader: {fileID: 0}
+      serializedProperties: []
+  backParameters:
+    enabled: 0
+    color: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+    dilateShift: 1
+    blurShift: 1
+    fillPass:
+      shader: {fileID: 0}
+      serializedProperties: []
+  frontParameters:
+    enabled: 1
+    color: {r: 1, g: 1, b: 1, a: 1}
+    dilateShift: 1
+    blurShift: 1
+    fillPass:
+      shader: {fileID: 0}
+      serializedProperties: []
 --- !u!114 &7522218322722121315
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -186,6 +274,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   transSpawn: {fileID: 5797280517724164653}
   prefabRestoreHealth: {fileID: 6235856378557397745, guid: 4f34e1eff7d3f5c4d9a8b7dc61d9263d, type: 3}
+--- !u!114 &5748573314074731271
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3216393412561314560}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96e8978b5c588024e8716e45f5b31815, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlinable: {fileID: 8919525741146755382}
+  interactRadius: 1
+  interactDistance: 2
+  interactLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  objInfoInteract: {fileID: 4065098334860307184}
+  offsetSpherecast: {x: 0.75, y: 0, z: 0}
 --- !u!1 &4065098334860307184
 GameObject:
   m_ObjectHideFlags: 0
@@ -197,6 +305,7 @@ GameObject:
   - component: {fileID: 8643098740256712429}
   - component: {fileID: 3650402748027314106}
   - component: {fileID: 1149860688944720105}
+  - component: {fileID: 3981397995181181091}
   m_Layer: 7
   m_Name: Icon
   m_TagString: Untagged
@@ -214,10 +323,10 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
   m_LocalPosition: {x: 0, y: 1.25, z: 0}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
+  m_LocalScale: {x: 0.10000001, y: 0.1, z: 0.10000001}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 8532067289305449781}
+  m_Father: {fileID: 6820488125114124277}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &3650402748027314106
 SpriteRenderer:
@@ -283,6 +392,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d3a862fa0257e84b87d773c8aac8e1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &3981397995181181091
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4065098334860307184}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 034bc47afcbf5e141a58d5c20b7808e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7927515397682856337
 GameObject:
   m_ObjectHideFlags: 0
@@ -294,7 +415,8 @@ GameObject:
   - component: {fileID: 2473605389376677814}
   - component: {fileID: 4253727149834704823}
   - component: {fileID: 4257205194076161298}
-  m_Layer: 0
+  - component: {fileID: 7672313457297776867}
+  m_Layer: 9
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -366,55 +488,15 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!1 &8761921787419279706
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8532067289305449781}
-  - component: {fileID: 1704139724545571507}
-  m_Layer: 7
-  m_Name: ShowInteract
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &8532067289305449781
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8761921787419279706}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 8643098740256712429}
-  m_Father: {fileID: 6820488125114124277}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1704139724545571507
+--- !u!114 &7672313457297776867
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8761921787419279706}
+  m_GameObject: {fileID: 7927515397682856337}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 96e8978b5c588024e8716e45f5b31815, type: 3}
+  m_Script: {fileID: 11500000, guid: 034bc47afcbf5e141a58d5c20b7808e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interactRadius: 1
-  interactDistance: 2
-  interactLayer:
-    serializedVersion: 2
-    m_Bits: 8
-  objInfoInteract: {fileID: 4065098334860307184}
-  offsetSpherecast: {x: 0.75, y: 0, z: 0}

@@ -34,5 +34,8 @@ public class TestingInteractRestoreHealth : MonoBehaviour, IInteractable
         listRestoreHealth[index].transform.position = transSpawn.position;
         listRestoreHealth[index].transform.rotation = transSpawn.rotation;
         listRestoreHealth[index].gameObject.SetActive(true);
+        listRestoreHealth[index].onActive = true;
+        listRestoreHealth[index].rb.isKinematic = false;
+        listRestoreHealth[index].rb.useGravity = true;
     }
 }

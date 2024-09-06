@@ -8,6 +8,9 @@ TagManager:
   - Enemy
   - Player Attack
   - Enemy Attack
+  - Ground
+  - Seed
+  - Plant
   layers:
   - Default
   - TransparentFX

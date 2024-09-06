@@ -111,6 +111,7 @@ public class BasicPlayerController : MonoBehaviour
     void UseEquipment_Performed(InputAction.CallbackContext context)
     {
         Debug.Log("UseEquipment Value : " + context.ReadValueAsButton());
+        UsingEquipment();
     }
     void Interact_Performed(InputAction.CallbackContext context)
     {
@@ -151,7 +152,8 @@ public class BasicPlayerController : MonoBehaviour
     {
         Vector2 inputmove = moveAction.ReadValue<Vector2>();
         Vector3 moveDirection = new Vector3(inputmove.x, 0, inputmove.y);
-        Vector3 movement = transform.forward * moveDirection.magnitude * MoveSpeed * Time.deltaTime;
+        float speed = onGrab ? MoveSpeedGrab : MoveSpeed;
+        Vector3 movement = transform.forward * moveDirection.magnitude * speed * Time.deltaTime;
         if (inputmove != Vector2.zero)
         {
             Vector3 camrot = new Vector3(0, transCamera.rotation.eulerAngles.y, 0);
@@ -216,7 +218,8 @@ public class BasicPlayerController : MonoBehaviour
     WaitForSeconds wfsDodge;
     private void Dodging()
     {
-        StartCoroutine(IeDodging());
+        if (!onGrab)
+            StartCoroutine(IeDodging());
     }
     IEnumerator IeDodging()
     {
@@ -238,7 +241,6 @@ public class BasicPlayerController : MonoBehaviour
     [FoldoutGroup("Attack")][SerializeField] private float timeFinishAttack;
     [FoldoutGroup("Attack")][SerializeField] private Transform transAttackPoint;
     [FoldoutGroup("Attack")] private List<AttackObject> listAttack = new List<AttackObject>();
-
     private WaitForSeconds wfsTimePrepareAttack;
     private WaitForSeconds wfsTimeFinishAttack;
     private Coroutine corouTempAttack;
@@ -282,7 +284,7 @@ public class BasicPlayerController : MonoBehaviour
 
     private void Attacking()
     {
-        if (currentAttack != null)
+        if (currentAttack != null && !onGrab)
         {
             StartCoroutine(PerformAttack());
         }
@@ -336,6 +338,11 @@ public class BasicPlayerController : MonoBehaviour
     [FoldoutGroup("Interact")][SerializeField] private Vector3 interactOffsetPos;
     void Interacting()
     {
+        if (onGrab)
+        {
+            ThrowObject();
+            return;
+        }
         RaycastHit[] hits = Physics.SphereCastAll(transform.position + interactOffsetPos, interactRadius, transform.forward, interactRadius, layerInteractable);
         if (hits.Length > 0)
         {
@@ -353,6 +360,41 @@ public class BasicPlayerController : MonoBehaviour
         Gizmos.DrawLine(transAttackPoint.position + interactOffsetPos, transAttackPoint.position + transform.forward * interactRadius);
         Gizmos.DrawWireSphere(transAttackPoint.position + interactOffsetPos + transform.forward * interactRadius, interactDistance);
     }
+    #endregion
+
+    #region Grabing
+    [FoldoutGroup("Grabing")] public Transform transGrab;
+    [FoldoutGroup("Grabing")] private bool onGrab;
+    [FoldoutGroup("Grabing")] private GameObject objGrab;
+    [FoldoutGroup("Grabing")][SerializeField] private float MoveSpeedGrab = 0.25f;
+    public void SetObjectGrab(GameObject grab)
+    {
+        onGrab = true;
+        objGrab = grab;
+    }
+    private void ThrowObject()
+    {
+        onGrab = false;
+        objGrab.GetComponent<IThrowable>().Throw();
+        objGrab = null;
+    }
+    #endregion
+
+    #region Using Equipment
+    void UsingEquipment()
+    {
+        switch (prefabAttack.nameAtk)
+        {
+            case "Shovel Slash":
+                break;
+        }
+    }
+    void ShovelDig()
+    {
+
+
+    }
+
     #endregion
     #endregion
 

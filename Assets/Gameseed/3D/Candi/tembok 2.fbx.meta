@@ -1,9 +1,14 @@
 fileFormatVersion: 2
-guid: 7d8a8fca88cdc9c46be97ca0e0dc5336
+guid: 464dd9c3f78cae8469b532993cd56347
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: z candi wall
+    second: {fileID: 2100000, guid: a7cc1e1ccef21d04a8e01d4baf731a5e, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

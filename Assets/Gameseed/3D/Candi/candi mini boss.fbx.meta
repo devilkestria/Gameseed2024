@@ -1,13 +1,14 @@
 fileFormatVersion: 2
-<<<<<<<< HEAD:Assets/Gameseed/3D/Props/rock 1.fbx.meta
-guid: 13364c0f9ce37184cabbb5b97a61a34d
-========
-guid: 720fd238bec3da14e9b1a336692918dc
->>>>>>>> 053eecf4f83f9d4067efa05d60d2465745b75ef3:Assets/Gameseed/3D/Candi/pintu masuk .fbx.meta
+guid: 4d5420a167b2124418892d91a6c80c29
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: xy chandi
+    second: {fileID: 2100000, guid: 821030a0097e7b94eb1510a4116c19a6, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

@@ -19,6 +19,6 @@ public class TestingInteractWeaponChange : MonoBehaviour, IInteractable
     void ResetWeaponChange()
     {
         objWeapon.SetActive(true);
-        playerController.OnChangeAttack(null, 0, 0);
+        playerController.OnChangeAttack(null, 0, 0, null);
     }
 }

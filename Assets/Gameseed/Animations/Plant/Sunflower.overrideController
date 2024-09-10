@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Sunflower
+  m_Controller: {fileID: 9100000, guid: 3f61c6ca217754045bf7da74d4d1d21f, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: d36be40916e519b459f1a4d3413ae7c3, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: e8b24d162bd02c94da346413c31e3f9b, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: ad9308b812937ce44bebb3aaeb775cd4, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: c3a64c1a76943e64fafce6cdc1189e8f, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 194c9f2cf74f1964b823b56c5a043acd, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 425a3d7cb7a6fc54ab5d2c25e13518c5, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: c0d1de5a7098e1840a329cf7e08890e5, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 61ec3a9162e738e45b7792defad06c6c, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: ba29dacd3e4735048a97d070567fae04, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 247ccf8bc1a5b634481fed8c0f22e961, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: e8b24d162bd02c94da346413c31e3f9b, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: e8b24d162bd02c94da346413c31e3f9b, type: 2}

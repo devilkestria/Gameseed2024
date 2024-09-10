@@ -1,40 +1,50 @@
 using System.Collections;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class BasicMonster : MonoBehaviour, IDamageable
+public class BasicMonster : MonoBehaviour, IDamageable, IDeathable
 {
+    [FoldoutGroup("Basic Monster")][SerializeField] private Status status;
     [FoldoutGroup("Basic Monster")][SerializeField] private EnemyState state;
     [FoldoutGroup("Basic Monster")][SerializeField] private Rigidbody rb;
+    [FoldoutGroup("Basic Monster")][SerializeField] private Collider collider;
+    [FoldoutGroup("Basic Monster")] public int IndexMonster;
+    [FoldoutGroup("Basic Monster")] public bool isActive;
     [FoldoutGroup("Basic Monster")] private Transform target;
     [FoldoutGroup("Basic Monster")][SerializeField] private NavMeshAgent agent;
-    [FoldoutGroup("Basic Monster")] float timeOnDamage = 0.25f;
-    [FoldoutGroup("Basic Monster")] WaitForSeconds wfsTimeOnDamage;
-    [FoldoutGroup("Basic Monster")][Range(0.001f, 0.1f)][SerializeField] private float stillTreshold = 0.05f;
+    [FoldoutGroup("Basic Monster")][SerializeField] private AudioSource sfxAudioSource;
     [FoldoutGroup("Basic Monster")][SerializeField] float timeIddle = 5f;
     [FoldoutGroup("Basic Monster")] float deltatimeIddle;
+    [FoldoutGroup("Basic Monster/Damage")][SerializeField] float timeDurationDamage = 0.25f;
+    [FoldoutGroup("Basic Monster/Damage")] WaitForSeconds wfsTimeDurationDamage;
+    [FoldoutGroup("Basic Monster/Damage")][Range(0.001f, 0.1f)][SerializeField] private float stillTreshold = 0.05f;
     private void Awake()
     {
         if (!agent) agent = GetComponent<NavMeshAgent>();
         if (!rb) rb = GetComponent<Rigidbody>();
+        if (!collider) collider = GetComponent<Collider>();
+        if (!status) status = GetComponent<Status>();
+        if (!_animator) _animator = GetComponentInChildren<Animator>();
+        _hasAnimator = _animator != null;
         originPosition = transform.position;
         wfsTimePrepareAttack = new WaitForSeconds(timePrepareAttack);
         wfsTimeFinishAttack = new WaitForSeconds(timeFinishAttack);
-        wfsTimeOnDamage = new WaitForSeconds(timeOnDamage);
+        wfsTimeDurationDamage = new WaitForSeconds(timeDurationDamage);
+        wfsTimeDurationDeath = new WaitForSeconds(timeDurationDeath);
     }
     private void Start()
     {
         if (!target) target = GameplayManager.instance.playerObj.transform;
-        _hasAnimator = TryGetComponent(out _animator);
+        AssignAnimationIDs();
     }
     private void Update()
     {
         distanceTarget = Vector3.Distance(target.position, transform.position);
         distanceOrigin = Vector3.Distance(originPosition, transform.position);
         distancePatrol = Vector3.Distance(transform.position, patrolPos);
-        if (_hasAnimator) _animator.SetFloat(_animIDHurt, rb.velocity.magnitude);
         CheckState();
     }
     public virtual void CheckState()
@@ -60,6 +70,7 @@ public class BasicMonster : MonoBehaviour, IDamageable
     }
     public virtual void WaitingCommand()
     {
+        if (_hasAnimator) _animator.SetBool(_animIDWalk, false);
         if (distanceTarget <= attackRadius)
         {
             deltatimeIddle = 0;
@@ -91,6 +102,7 @@ public class BasicMonster : MonoBehaviour, IDamageable
     [FoldoutGroup("Basic Monster/Chase Target")][SerializeField] private float ChaseRadius;
     public virtual void ChasingTarget()
     {
+        if (_hasAnimator) _animator.SetBool(_animIDWalk, true);
         agent.SetDestination(target.position);
         if (distanceTarget <= attackRadius)
         {
@@ -112,6 +124,7 @@ public class BasicMonster : MonoBehaviour, IDamageable
     [FoldoutGroup("Basic Monster/Attack")][SerializeField] private float timeFinishAttack;
     [FoldoutGroup("Basic Monster/Attack")] WaitForSeconds wfsTimeFinishAttack;
     [FoldoutGroup("Basic Monster/Attack")][SerializeField] private AttackObject prefabAttack;
+    [FoldoutGroup("Basic Monster/Attack")][SerializeField] List<AudioClip> listSfxAttack;
     [FoldoutGroup("Basic Monster/Attack")][SerializeField] private Transform transAttackPoint;
     [FoldoutGroup("Basic Monster/Attack")] List<AttackObject> listAttack = new List<AttackObject>();
     [FoldoutGroup("Basic Monster/Attack")] Coroutine corouAttack;
@@ -127,6 +140,7 @@ public class BasicMonster : MonoBehaviour, IDamageable
     }
     IEnumerator IeAttacking()
     {
+        if (_hasAnimator) _animator.SetBool(_animIDWalk, false);
         agent.enabled = false;
         // Harus Muter Menghadap player
 
@@ -159,6 +173,8 @@ public class BasicMonster : MonoBehaviour, IDamageable
             listAttack.Add(atkobj);
             indexatk = listAttack.Count - 1;
         }
+        int random = Random.Range(0, listSfxAttack.Count);
+        sfxAudioSource.PlayOneShot(listSfxAttack[random]);
         listAttack[indexatk].transform.position = transAttackPoint.position;
         listAttack[indexatk].transform.rotation = transAttackPoint.rotation;
         listAttack[indexatk].gameObject.SetActive(true);
@@ -179,6 +195,7 @@ public class BasicMonster : MonoBehaviour, IDamageable
     [FoldoutGroup("Basic Monster/Back Origin Pos")][SerializeField] private float minOriginRadius;
     public virtual void BackToOriginPos()
     {
+        if (_hasAnimator) _animator.SetBool(_animIDWalk, true);
         agent.SetDestination(originPosition);
         if (distanceTarget <= attackRadius)
         {
@@ -213,6 +230,7 @@ public class BasicMonster : MonoBehaviour, IDamageable
             while (!canreach) canreach = GetRandomPosInRadius(out patrolPos);
             createPatrol = false;
         }
+        if (_hasAnimator) _animator.SetBool(_animIDWalk, true);
         agent.SetDestination(patrolPos);
         if (distanceTarget <= attackRadius)
         {
@@ -228,6 +246,7 @@ public class BasicMonster : MonoBehaviour, IDamageable
         }
         if (distancePatrol <= agent.stoppingDistance || distancePatrol <= 0.1)
         {
+            if (_hasAnimator) _animator.SetBool(_animIDWalk, false);
             deltatimeIddle += Time.deltaTime;
             if (deltatimeIddle > timeIddle)
             {
@@ -254,30 +273,28 @@ public class BasicMonster : MonoBehaviour, IDamageable
     }
 
     #region Damage
-    public void Damage(AttackObject atkobj)
+    public void Damage(AttackObject atkobj, AudioClip clip)
     {
         StopAllCoroutines();
         corouAttack = null;
         state = EnemyState.EnemyOnDamage;
-        StartCoroutine(IeDamage(atkobj));
+        StartCoroutine(IeDamage(atkobj, clip));
     }
-    IEnumerator IeDamage(AttackObject atkobj)
+    IEnumerator IeDamage(AttackObject atkobj, AudioClip clip)
     {
+        if (_hasAnimator) _animator.SetBool(_animIDWalk, false);
         yield return null;
         agent.enabled = false;
         rb.useGravity = true;
         rb.isKinematic = false;
-
+        sfxAudioSource.PlayOneShot(clip);
         if (_hasAnimator) _animator.SetTrigger(_animIDHurt);
         if (atkobj.forcePush > 0)
-        {
-            Debug.Log("Pushed " + name);
             rb.AddForce(atkobj.forcePush * atkobj.transform.forward, ForceMode.Impulse);
-        }
 
         yield return new WaitForFixedUpdate();
         yield return new WaitUntil(() => rb.velocity.magnitude < stillTreshold);
-        yield return wfsTimeOnDamage;
+        yield return wfsTimeDurationDamage;
 
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
@@ -286,6 +303,61 @@ public class BasicMonster : MonoBehaviour, IDamageable
         agent.Warp(transform.position);
         agent.enabled = true;
 
+        state = EnemyState.EnemyWaiting;
+    }
+    #endregion
+
+    #region Death
+    [FoldoutGroup("Basic Monster/Death")][SerializeField] private float timeDurationDeath;
+    [FoldoutGroup("Basic Monster/Death")] private WaitForSeconds wfsTimeDurationDeath;
+    public void Death()
+    {
+        StopAllCoroutines();
+        corouAttack = null;
+        state = EnemyState.EnemyDeath;
+        StartCoroutine(IeDeath());
+    }
+    IEnumerator IeDeath()
+    {
+        if (_hasAnimator) _animator.SetBool(_animIDWalk, false);
+        yield return null;
+        rb.isKinematic = true;
+        rb.useGravity = false;
+        collider.enabled = false;
+        agent.enabled = false;
+        isActive = false;
+
+        if (_hasAnimator) _animator.SetTrigger(_animIDDeath);
+        yield return new WaitForFixedUpdate();
+        yield return new WaitUntil(() => rb.velocity.magnitude < stillTreshold);
+        yield return wfsTimeDurationDeath;
+
+        if (GameplayManager.instance.listMonster.Contains(this))
+            GameplayManager.instance.listMonster.Add(this);
+        gameObject.SetActive(false);
+    }
+    #endregion
+
+    #region Spawn
+    [FoldoutGroup("Basic Monster/Spawn")] private float timeDurationSpawn;
+    [FoldoutGroup("Basic Monster/Spawn")] private WaitForSeconds wfsTimeDurationSpawn;
+    public void SpawnMonster(Vector3 pos, Quaternion rot)
+    {
+        gameObject.SetActive(true);
+        transform.position = pos;
+        transform.rotation = rot;
+        StartCoroutine(IeSpawnMonster());
+    }
+    IEnumerator IeSpawnMonster()
+    {
+        if (_hasAnimator) _animator.SetTrigger(_animIDSpawn);
+        yield return wfsTimeDurationSpawn;
+        collider.enabled = true;
+        agent.enabled = true;
+        rb.useGravity = false;
+        rb.isKinematic = false;
+        isActive = true;
+        status.ResetHealth();
         state = EnemyState.EnemyWaiting;
     }
     #endregion
@@ -305,16 +377,20 @@ public class BasicMonster : MonoBehaviour, IDamageable
     }
 
     #region Animation
-    private Animator _animator;
+    [FoldoutGroup("Basic Monster/Animation")][SerializeField] private Animator _animator;
     private bool _hasAnimator;
-    private int _animIDSpeed;
+    private int _animIDWalk;
     private int _animIDAttack;
     private int _animIDHurt;
+    private int _animIDDeath;
+    private int _animIDSpawn;
     private void AssignAnimationIDs()
     {
-        _animIDSpeed = Animator.StringToHash("Speed");
+        _animIDWalk = Animator.StringToHash("Walk");
         _animIDAttack = Animator.StringToHash("Attack");
-        _animIDHurt = Animator.StringToHash("Hurt");
+        _animIDHurt = Animator.StringToHash("Hit");
+        _animIDDeath = Animator.StringToHash("Death");
+        _animIDSpawn = Animator.StringToHash("Spawn");
     }
     #endregion
 }

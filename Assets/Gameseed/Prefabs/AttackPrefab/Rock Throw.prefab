@@ -139,6 +139,10 @@ MonoBehaviour:
   isPenetration: 0
   prefabEffectOnDestroy: {fileID: 0}
   typeAttack: 1
+  listAudioOnHit:
+  - {fileID: 8300000, guid: 1ba0884b8b6f7464e96e88aff736fac7, type: 3}
+  - {fileID: 8300000, guid: 986d4e207d1e07e4e9f7885ab81f73c8, type: 3}
+  - {fileID: 8300000, guid: 84c07351990b469468d118089146fb2e, type: 3}
 --- !u!65 &7444398147419613147
 BoxCollider:
   m_ObjectHideFlags: 0

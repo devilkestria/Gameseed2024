@@ -1,205 +1,65 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
-public class Bullet : MonoBehaviour
+public class Testing : MonoBehaviour
 {
-
-    private void OnTriggerEnter(Collider other)
+    [Serializable]
+    public class DataProgress
     {
-        IDamagable damage = other.GetComponent<IDamagable>();
-        if (damage != null)
-            damage.OnDamage();
-
-        //Class Batu batu = other.gameobject.getcomponent<Batu>();
-        // if(Batu) Batu.BatuHancur(); 
-
-        //Class KotakAmunisi kotak = other.gameobject.getcomponent<KotakAmunisi>();
-        // if(kotak) kotak.kotakHancur();
-
-        //Class BarrelExplosion barrel = other.gameobject.getcomponent<BarrelExplosion>();
-        // if(barrel) barrel.BarrelHancur();
-
-        //Class Batu batu = other.gameobject.getcomponent<Batu>();
-        // if(Batu) Batu.BatuHancur(); 
-
-        //Class KotakAmunisi kotak = other.gameobject.getcomponent<KotakAmunisi>();
-        // if(kotak) kotak.kotakHancur();
-
-        //Class BarrelExplosion barrel = other.gameobject.getcomponent<BarrelExplosion>();
-        // if(barrel) barrel.BarrelHancur();
-
-        //Class Batu batu = other.gameobject.getcomponent<Batu>();
-        // if(Batu) Batu.BatuHancur(); 
-
-        //Class KotakAmunisi kotak = other.gameobject.getcomponent<KotakAmunisi>();
-        // if(kotak) kotak.kotakHancur();
-
-        //Class BarrelExplosion barrel = other.gameobject.getcomponent<BarrelExplosion>();
-        // if(barrel) barrel.BarrelHancur();
-
-        //Class Batu batu = other.gameobject.getcomponent<Batu>();
-        // if(Batu) Batu.BatuHancur(); 
-
-        //Class KotakAmunisi kotak = other.gameobject.getcomponent<KotakAmunisi>();
-        // if(kotak) kotak.kotakHancur();
-
-        //Class BarrelExplosion barrel = other.gameobject.getcomponent<BarrelExplosion>();
-        // if(barrel) barrel.BarrelHancur();
+        public string valuename;
+        public List<bool> value;
     }
-}
+    public List<DataProgress> listdata;
+    public Dictionary<string, DataProgress> dicData = new Dictionary<string, DataProgress>();
+    public Dictionary<string, List<Dictionary<string, DataProgress>>> dicdicdata = new Dictionary<string, List<Dictionary<string, DataProgress>>>();
+    public Dictionary<string, Dictionary<string, Dictionary<string, DataProgress>>> bigdicdata = new Dictionary<string, Dictionary<string, Dictionary<string, DataProgress>>>();
 
-public interface IDamagable
-{
-    void OnDamage();
-}
-public class KotakAmunisi : MonoBehaviour, IDamagable
-{
-    public void OnDamage()
+    [Button]
+    public void ButtonAddDicData()
     {
-        KotakHancur();
-    }
-
-    public void KotakHancur()
-    {
-
-    }
-}
-
-public class BaseEnemy : MonoBehaviour
-{
-    public float health;
-    [SerializeField] GameObject prefabBullet;
-    public virtual void Attack()
-    {
-        InstantiteBullet();
-    }
-    void InstantiteBullet()
-    {
-
-    }
-}
-public class EnemyManusia : BaseEnemy
-{
-    public override void Attack()
-    {
-        TrejectorLurus();
-        base.Attack();
-    }
-    void TrejectorLurus()
-    {
-
-    }
-}
-public class Drone : BaseEnemy
-{
-    public override void Attack()
-    {
-        TrejectorBawah();
-        base.Attack();
-    }
-    void TrejectorBawah()
-    {
-
-    }
-}
-public class DroneListrik : BaseEnemy
-{
-    float newHealth;
-    private void Awake()
-    {
-        health = newHealth;
-    }
-    void MendekatiPlayer()
-    {
-
-    }
-    void Kamikaze()
-    {
-
-    }
-    public override void Attack()
-    {
-        MendekatiPlayer();
-        Kamikaze();
-        base.Attack();
-    }
-}
-public class EnemyManusiaRacun : EnemyManusia
-{
-    void MencariTempatLindung()
-    {
-    }
-    public override void Attack()
-    {
-        MencariTempatLindung();
-        base.Attack();
-    }
-}
-public class OldBaseEnemy : MonoBehaviour
-{
-    [SerializeField] float health;
-    [SerializeField] GameObject prefabBullet;
-
-    public enum TypeBaseEnemy { Manusia, Turret, Tank, Drone, ManusiaRacun, TankListrik, DroneListrik, TurretShield }
-    [SerializeField] TypeBaseEnemy type;
-    private void Attack1()
-    {
-        InstantiateBullet(prefabBullet);
-    }
-    private void Attack2()
-    {
-        switch (type)
+        foreach (var data in listdata)
         {
-            case TypeBaseEnemy.Manusia:
-            case TypeBaseEnemy.Turret:
-                TrejectoryLurus();
-                InstantiateBullet(prefabBullet);
-                break;
-            case TypeBaseEnemy.Tank:
-                TrejectoryParabolic();
-                InstantiateBullet(prefabBullet);
-                break;
-            case TypeBaseEnemy.Drone:
-                TrejectoryBawah();
-                InstantiateBullet(prefabBullet);
-                break;
+            dicData.Add(data.valuename, data);
         }
     }
-    private void Attack3()
+    [Button]
+    public void ButtonAddDicDicData()
     {
-        switch (type)
+        string[] key = dicData.Keys.ToArray();
+        for (int i = 0; i < key.Length; i++)
         {
-            case TypeBaseEnemy.Manusia:
-            case TypeBaseEnemy.Turret:
-                TrejectoryLurus();
-                InstantiateBullet(prefabBullet);
-                break;
-            case TypeBaseEnemy.Tank:
-                TrejectoryParabolic();
-                InstantiateBullet(prefabBullet);
-                break;
-            case TypeBaseEnemy.Drone:
-                TrejectoryBawah();
-                InstantiateBullet(prefabBullet);
-                break;
+            string[] chapter = key[i].Split('-');
+            string keydicdic = chapter[0];
+            Dictionary<string, DataProgress> dicti = new Dictionary<string, DataProgress>();
+            dicti.Add(chapter[1], dicData[key[i]]);
+            if (dicdicdata.ContainsKey(keydicdic))
+                dicdicdata[keydicdic].Add(dicti);
+            else
+            {
+                List<Dictionary<string, DataProgress>> listdat = new List<Dictionary<string, DataProgress>>();
+                listdat.Add(dicti);
+                dicdicdata.Add(keydicdic, listdat);
+            }
         }
     }
-    private void InstantiateBullet(GameObject prefabBullet)
-    {
 
+    [Button]
+    public void ButtonShowDataDicData(string key, int index)
+    {
+        DataProgress data = dicData[key];
+        Debug.Log(data.value[index]);
     }
 
-    void TrejectoryLurus()
+    [Button]
+    public void ButtonShowDataDicDicData(string key1, string key2, int index)
     {
-
-    }
-    void TrejectoryBawah()
-    {
-
-    }
-    void TrejectoryParabolic()
-    {
-
+        List<Dictionary<string, DataProgress>> listdicti = dicdicdata[key1];
+        int indexter = listdicti.FindIndex(x=> x.ContainsKey(key2));
+        DataProgress data = listdicti[indexter][key2];
+        Debug.Log(data.value[index]);
     }
 }

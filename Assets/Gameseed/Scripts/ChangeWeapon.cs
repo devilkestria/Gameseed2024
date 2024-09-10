@@ -9,6 +9,7 @@ public class ChangeWeapon : MonoBehaviour, IInteractable
     [FoldoutGroup("Change Weapon")][SerializeField] private AttackObject attackObject;
     [FoldoutGroup("Change Weapon")][SerializeField] private float timePrepareAttack;
     [FoldoutGroup("Change Weapon")][SerializeField] private float timeFinishAttack;
+    [FoldoutGroup("Change Weapon")][SerializeField] private List<AudioClip> listsfxAtk;
     [FoldoutGroup("Change Weapon")][SerializeField] private BasicPlayerController playerController;
     [FoldoutGroup("Show Interact")][SerializeField] private float interactRadius;
     [FoldoutGroup("Show Interact")][SerializeField] private LayerMask layerInteract;
@@ -22,7 +23,7 @@ public class ChangeWeapon : MonoBehaviour, IInteractable
 
     public void Interact()
     {
-        playerController.OnChangeAttack(attackObject, timePrepareAttack, timeFinishAttack);
+        playerController.OnChangeAttack(attackObject, timePrepareAttack, timeFinishAttack, listsfxAtk);
         gameObject.SetActive(false);
     }
 

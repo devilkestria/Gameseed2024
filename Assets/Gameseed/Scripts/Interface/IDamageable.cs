@@ -4,5 +4,5 @@ using UnityEngine;
 
 public interface IDamageable
 {
-    public void Damage(AttackObject attackObject);
+    public void Damage(AttackObject attackObject, AudioClip clip);
 }

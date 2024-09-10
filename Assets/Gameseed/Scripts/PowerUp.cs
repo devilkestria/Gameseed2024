@@ -8,6 +8,7 @@ public class PowerUp : MonoBehaviour
     [FoldoutGroup("Power Up")][SerializeField] private AttackObject attackObject;
     [FoldoutGroup("Power Up")][SerializeField] private float timePrepareAttack;
     [FoldoutGroup("Power Up")][SerializeField] private float timeFinishAttack;
+    [FoldoutGroup("Power Up")][SerializeField] private List<AudioClip> listAudioAttack;
     [FoldoutGroup("Power Up")][SerializeField] private float timeTemporaryChange;
     [FoldoutGroup("Power Up")] public bool onActive;
     [FoldoutGroup("Power Up")][SerializeField] float overalapRadius;
@@ -26,7 +27,7 @@ public class PowerUp : MonoBehaviour
             {
                 if (!GameplayManager.instance.listPowerUp.Contains(this))
                     GameplayManager.instance.listPowerUp.Add(this);
-                playerController.OnTemporaryChangeAttack(attackObject, timePrepareAttack, timeFinishAttack, timeTemporaryChange);
+                playerController.OnTemporaryChangeAttack(attackObject, timePrepareAttack, timeFinishAttack, timeTemporaryChange, listAudioAttack);
                 gameObject.SetActive(false);
             }
         }

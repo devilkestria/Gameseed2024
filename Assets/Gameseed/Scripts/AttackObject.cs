@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
-using Unity.Mathematics;
 using UnityEngine;
 public class AttackObject : MonoBehaviour
 {
@@ -15,6 +14,8 @@ public class AttackObject : MonoBehaviour
     [FoldoutGroup("Attack Object")][SerializeField] private bool isPenetration;
     [FoldoutGroup("Attack Object")][SerializeField] GameObject prefabEffectOnDestroy;
     [FoldoutGroup("Attack Object")] public TypeAttack typeAttack;
+    [FoldoutGroup("Attack Object/Sfx")] public List<AudioClip> listAudioOnHit;
+
     private void OnEnable()
     {
         onActive = true;
@@ -49,8 +50,9 @@ public class AttackObject : MonoBehaviour
         if (Utility.CheckHitable(tag, other.tag))
         {
             IDamageable[] dmgables = other.GetComponents<IDamageable>();
+            int random = Random.Range(0, listAudioOnHit.Count);
             for (int i = 0; i < dmgables.Length; i++)
-                dmgables[i].Damage(this);
+                dmgables[i].Damage(this, listAudioOnHit[random]);
             if (!isPenetration)
             {
                 onActive = false;
@@ -65,6 +67,6 @@ public class AttackObject : MonoBehaviour
     public virtual void OnDeath()
     {
         if (prefabEffectOnDestroy)
-            Instantiate(prefabEffectOnDestroy, transform.position, quaternion.identity);
+            Instantiate(prefabEffectOnDestroy, transform.position, Quaternion.identity);
     }
 }

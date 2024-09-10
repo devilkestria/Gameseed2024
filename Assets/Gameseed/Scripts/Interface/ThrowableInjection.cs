@@ -16,7 +16,6 @@ public class ThrowableInjection : IThrowable
     }
     public void Throw()
     {
-        rb.useGravity = false;
         rb.isKinematic = false;
         Vector3 targetPosition = rb.transform.position + trans.forward.normalized * distanceThrow;
 

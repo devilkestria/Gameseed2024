@@ -149,6 +149,10 @@ MonoBehaviour:
   attackObject: {fileID: 8019992738615131041, guid: f472e7c6fa241194088c94a2c899ceef, type: 3}
   timePrepareAttack: 0.5
   timeFinishAttack: 0.5
+  listAudioAttack:
+  - {fileID: 8300000, guid: b76d652452a47c54d8c06674a08fc515, type: 3}
+  - {fileID: 8300000, guid: 395d3d0eb11fed44c958a46cf785f0bb, type: 3}
+  - {fileID: 8300000, guid: 86ee1c31bd77f134780bc0f1a22fa41a, type: 3}
   timeTemporaryChange: 10
   onActive: 1
   overalapRadius: 0.75

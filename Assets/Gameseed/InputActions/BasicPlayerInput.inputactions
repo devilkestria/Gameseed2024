@@ -60,7 +60,16 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Item 1",
+                    "name": "Play Music",
+                    "type": "Button",
+                    "id": "872976a7-fbc2-4696-b2de-a2a535a8e164",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Change Music Next",
                     "type": "Button",
                     "id": "c53d76d4-0286-4bd6-ad42-44312104c651",
                     "expectedControlType": "Button",
@@ -69,27 +78,9 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Item 2",
-                    "type": "Button",
-                    "id": "d5ec95a4-3d50-4c70-a519-4300c17243ff",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Item 3",
+                    "name": "Change Music Previous",
                     "type": "Button",
                     "id": "ad34b7ea-e829-44d3-974b-dbfafcdceea2",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Item 4",
-                    "type": "Button",
-                    "id": "935fc45b-1dc2-49dd-b529-36b6bf7e5d7e",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -275,8 +266,8 @@
                 },
                 {
                     "name": "",
-                    "id": "992f9d8a-854a-4d5a-ab8c-9ba4429a7c44",
-                    "path": "<Mouse>/leftButton",
+                    "id": "3ae7ec09-41f2-4717-94f5-b15e94fb5283",
+                    "path": "<Keyboard>/j",
                     "interactions": "",
                     "processors": "",
                     "groups": "KeyboardMouse",
@@ -308,8 +299,8 @@
                 },
                 {
                     "name": "",
-                    "id": "fdc085cd-927a-4d5f-a47e-cc24b9437cb2",
-                    "path": "<Mouse>/rightButton",
+                    "id": "f9478faa-18a5-43b9-a49f-681aea6c131f",
+                    "path": "<Keyboard>/l",
                     "interactions": "",
                     "processors": "",
                     "groups": "KeyboardMouse",
@@ -342,7 +333,7 @@
                 {
                     "name": "",
                     "id": "e4ca9514-01bd-42d8-955e-4855bdc8b9a4",
-                    "path": "<Keyboard>/q",
+                    "path": "<Keyboard>/i",
                     "interactions": "",
                     "processors": "",
                     "groups": "KeyboardMouse",
@@ -375,11 +366,11 @@
                 {
                     "name": "",
                     "id": "62473cbc-5d04-44c8-a415-e9e63e4966df",
-                    "path": "<Keyboard>/1",
+                    "path": "<Keyboard>/e",
                     "interactions": "",
                     "processors": "",
                     "groups": "KeyboardMouse",
-                    "action": "Item 1",
+                    "action": "Change Music Next",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -390,7 +381,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad",
-                    "action": "Item 1",
+                    "action": "Change Music Next",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -401,51 +392,18 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Xbox Controller",
-                    "action": "Item 1",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "07adc870-f818-4fcc-aa17-6ef9fba62aa5",
-                    "path": "<Keyboard>/2",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "KeyboardMouse",
-                    "action": "Item 2",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "eab4f9bf-1122-497e-ac01-69874fedbbec",
-                    "path": "<Gamepad>/dpad/right",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Gamepad",
-                    "action": "Item 2",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "c2fc40f0-fc67-44b2-b6c6-b9e8312217d8",
-                    "path": "<XInputController>/dpad/right",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Xbox Controller",
-                    "action": "Item 2",
+                    "action": "Change Music Next",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
                     "id": "a5003212-3954-4af5-b437-eb360c9aa9e9",
-                    "path": "<Keyboard>/3",
+                    "path": "<Keyboard>/q",
                     "interactions": "",
                     "processors": "",
                     "groups": "KeyboardMouse",
-                    "action": "Item 3",
+                    "action": "Change Music Previous",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -456,7 +414,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad",
-                    "action": "Item 3",
+                    "action": "Change Music Previous",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -467,47 +425,14 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad",
-                    "action": "Item 3",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "459fbd1e-1b29-4834-996c-94d7f9bfa1a6",
-                    "path": "<Keyboard>/4",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "KeyboardMouse",
-                    "action": "Item 4",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "eba8cc2b-223c-4d8a-8c31-36a86ad1bdc9",
-                    "path": "<Gamepad>/dpad/left",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Gamepad",
-                    "action": "Item 4",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "149b1e5b-3411-4f54-aaeb-ebe88618bbf9",
-                    "path": "<XInputController>/dpad/left",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Item 4",
+                    "action": "Change Music Previous",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
                     "id": "5fa0d204-a12c-47d9-83f4-ed2de9d4fad8",
-                    "path": "<Keyboard>/e",
+                    "path": "<Keyboard>/k",
                     "interactions": "",
                     "processors": "",
                     "groups": "KeyboardMouse",
@@ -534,6 +459,39 @@
                     "processors": "",
                     "groups": "Xbox Controller",
                     "action": "Interact",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c660a498-9b58-40fc-9871-ff32e876ec89",
+                    "path": "<Keyboard>/p",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KeyboardMouse",
+                    "action": "Play Music",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7061299d-91bf-4383-8eec-2a0f48bf9172",
+                    "path": "<Gamepad>/rightTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Play Music",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "59cc167b-51ed-44cf-911f-cf9588f95c11",
+                    "path": "<XInputController>/rightTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Xbox Controller",
+                    "action": "Play Music",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

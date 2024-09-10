@@ -137,6 +137,10 @@ MonoBehaviour:
   forceForward: 5
   forcePush: 0
   isPenetration: 0
+  prefabEffectOnDestroy: {fileID: 0}
+  typeAttack: 0
+  listAudioOnHit:
+  - {fileID: 8300000, guid: 57f884e74265f9046b652b3bb345487a, type: 3}
 --- !u!65 &7444398147419613147
 BoxCollider:
   m_ObjectHideFlags: 0

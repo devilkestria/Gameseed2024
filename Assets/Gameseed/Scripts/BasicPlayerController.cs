@@ -4,7 +4,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class BasicPlayerController : MonoBehaviour
+public class BasicPlayerController : MonoBehaviour, IDamageable
 {
     #region Player State
     public PlayerState playerState;
@@ -16,9 +16,11 @@ public class BasicPlayerController : MonoBehaviour
     }
     void Awake()
     {
-        wfsDodge = new WaitForSeconds(timeDodge);
-        wfsTimePrepareAttack = new WaitForSeconds(timePrepareAttack);
-        wfsTimeFinishAttack = new WaitForSeconds(timeFinishAttack);
+        wfsTimeDodge = new WaitForSeconds(timeDodge);
+        wfsTimeGrabThrow = new WaitForSeconds(timeGrabThrow);
+        wfsTimePlantSeed = new WaitForSeconds(timePlantSeed / 2);
+        wfsTimeDurationDigPileUp = new WaitForSeconds(timeDurationDigPileUp / 2);
+        wfsTimeDurationDamage = new WaitForSeconds(timeDurationDamage);
         SetInputAction();
         AddInput();
     }
@@ -31,12 +33,11 @@ public class BasicPlayerController : MonoBehaviour
 
     private void Update()
     {
-        _hasAnimator = TryGetComponent(out _animator);
         GroundedCheck();
     }
     private void FixedUpdate()
     {
-        if (playerState == PlayerState.PlayerMoving)
+        if (playerState == PlayerState.PlayerMoving || playerState == PlayerState.PlayerPlayMusic)
             PlayerMove();
     }
     #endregion
@@ -49,11 +50,10 @@ public class BasicPlayerController : MonoBehaviour
     private InputAction attackAction;
     private InputAction dodgeAction;
     private InputAction useEquipmentAction;
+    private InputAction playMusicAction;
     private InputAction interactAction;
-    private InputAction item1Action;
-    private InputAction item2Action;
-    private InputAction item3Action;
-    private InputAction item4Action;
+    private InputAction changeMusicNextAction;
+    private InputAction changeMusicPreviousAction;
     void SetInputAction()
     {
         moveAction = playerInput.actions["Move"];
@@ -62,10 +62,9 @@ public class BasicPlayerController : MonoBehaviour
         dodgeAction = playerInput.actions["Dodge"];
         useEquipmentAction = playerInput.actions["Use Equipment"];
         interactAction = playerInput.actions["Interact"];
-        item1Action = playerInput.actions["Item 1"];
-        item2Action = playerInput.actions["Item 2"];
-        item3Action = playerInput.actions["Item 3"];
-        item4Action = playerInput.actions["Item 4"];
+        playMusicAction = playerInput.actions["Play Music"];
+        changeMusicNextAction = playerInput.actions["Change Music Next"];
+        changeMusicPreviousAction = playerInput.actions["Change Music Previous"];
     }
     void AddInput()
     {
@@ -74,10 +73,9 @@ public class BasicPlayerController : MonoBehaviour
         dodgeAction.performed += Dodge_Performed;
         useEquipmentAction.performed += UseEquipment_Performed;
         interactAction.performed += Interact_Performed;
-        item1Action.performed += Item1_Performed;
-        item2Action.performed += Item2_Performed;
-        item3Action.performed += Item3_Performed;
-        item4Action.performed += item4_Performed;
+        playMusicAction.performed += PlayMusic_Performed;
+        changeMusicNextAction.performed += ChangeMusicNext_Performed;
+        changeMusicPreviousAction.performed += ChangeMusicPrevious_Performed;
     }
     void RemoveInput()
     {
@@ -85,54 +83,47 @@ public class BasicPlayerController : MonoBehaviour
         attackAction.performed -= Attack_Performed;
         dodgeAction.performed -= Dodge_Performed;
         useEquipmentAction.performed -= UseEquipment_Performed;
-        item1Action.performed -= Item1_Performed;
-        item2Action.performed -= Item2_Performed;
-        item3Action.performed -= Item3_Performed;
-        item4Action.performed -= item4_Performed;
+        playMusicAction.performed -= PlayMusic_Performed;
+        changeMusicNextAction.performed -= ChangeMusicNext_Performed;
+        changeMusicPreviousAction.performed -= ChangeMusicPrevious_Performed;
     }
 
     #region Action Performed
     void Look_Performed(InputAction.CallbackContext context)
     {
-        Debug.Log("Look Value : " + context.ReadValue<Vector2>());
     }
     void Attack_Performed(InputAction.CallbackContext context)
     {
-        Debug.Log("Attack Performed :" + context.ReadValueAsButton());
         if (playerState == PlayerState.PlayerMoving)
             Attacking();
     }
     void Dodge_Performed(InputAction.CallbackContext context)
     {
-        Debug.Log("Dodge Value : " + context.ReadValueAsButton());
-        if (playerState == PlayerState.PlayerMoving)
+        if ((playerState == PlayerState.PlayerMoving || playerState == PlayerState.PlayerAttack) && !onGrab)
             Dodging();
     }
     void UseEquipment_Performed(InputAction.CallbackContext context)
     {
-        Debug.Log("UseEquipment Value : " + context.ReadValueAsButton());
-        UsingEquipment();
+        if (playerState == PlayerState.PlayerMoving && !onGrab)
+            UsingEquipment();
     }
     void Interact_Performed(InputAction.CallbackContext context)
     {
-        Debug.Log("Interacting Value : " + context.ReadValueAsButton());
-        Interacting();
+        if (playerState == PlayerState.PlayerMoving)
+            Interacting();
     }
-    void Item1_Performed(InputAction.CallbackContext context)
+    void PlayMusic_Performed(InputAction.CallbackContext context)
     {
-        Debug.Log("Item 1 Value : " + context.ReadValueAsButton());
+        if (playerState == PlayerState.PlayerMoving && !onGrab)
+            PlayMusic();
     }
-    void Item2_Performed(InputAction.CallbackContext context)
+    void ChangeMusicNext_Performed(InputAction.CallbackContext context)
     {
-        Debug.Log("Item 2 Value : " + context.ReadValueAsButton());
+        ChangeMusic(true);
     }
-    void Item3_Performed(InputAction.CallbackContext context)
+    void ChangeMusicPrevious_Performed(InputAction.CallbackContext context)
     {
-        Debug.Log("Item 3 Value : " + context.ReadValueAsButton());
-    }
-    void item4_Performed(InputAction.CallbackContext context)
-    {
-        Debug.Log("Item 4 Value : " + context.ReadValueAsButton());
+        ChangeMusic(false);
     }
     #endregion
 
@@ -152,7 +143,7 @@ public class BasicPlayerController : MonoBehaviour
     {
         Vector2 inputmove = moveAction.ReadValue<Vector2>();
         Vector3 moveDirection = new Vector3(inputmove.x, 0, inputmove.y);
-        float speed = onGrab ? MoveSpeedGrab : MoveSpeed;
+        float speed = onGrab ? MoveSpeedGrab : playerState == PlayerState.PlayerPlayMusic ? MoveSpeedPlayMusic : MoveSpeed;
         Vector3 movement = transform.forward * moveDirection.magnitude * speed * Time.deltaTime;
         if (inputmove != Vector2.zero)
         {
@@ -183,7 +174,6 @@ public class BasicPlayerController : MonoBehaviour
     [FoldoutGroup("Player Ground")] public LayerMask GroundLayers;
     private void GroundedCheck()
     {
-        // set sphere position, with offset
         Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y - GroundedOffset,
             transform.position.z);
         Grounded = Physics.CheckSphere(spherePosition, GroundedRadius, GroundLayers,
@@ -198,7 +188,6 @@ public class BasicPlayerController : MonoBehaviour
         {
             if (_hasAnimator)
             {
-                _animator.SetBool(_animIDJump, false);
                 _animator.SetBool(_animIDFreeFall, false);
             }
         }
@@ -215,18 +204,22 @@ public class BasicPlayerController : MonoBehaviour
     #region Dodging
     [FoldoutGroup("Dodge")][SerializeField] float forceDodge;
     [FoldoutGroup("Dodge")][SerializeField] float timeDodge;
-    WaitForSeconds wfsDodge;
+    WaitForSeconds wfsTimeDodge;
     private void Dodging()
     {
-        if (!onGrab)
-            StartCoroutine(IeDodging());
+        if (corouAttacking != null)
+        {
+            StopCoroutine(corouAttacking);
+            corouAttacking = null;
+        }
+        StartCoroutine(IeDodging());
     }
     IEnumerator IeDodging()
     {
         playerState = PlayerState.PlayerDodging;
         if (_hasAnimator) _animator.SetBool(_animIDDodge, true);
         rb.AddForce(transform.forward * forceDodge, ForceMode.Impulse);
-        yield return wfsDodge;
+        yield return wfsTimeDodge;
         if (_hasAnimator) _animator.SetBool(_animIDDodge, false);
         rb.velocity = Vector3.zero;
         playerState = PlayerState.PlayerMoving;
@@ -239,54 +232,67 @@ public class BasicPlayerController : MonoBehaviour
     [FoldoutGroup("Attack")] private AttackObject currentAttack;
     [FoldoutGroup("Attack")][SerializeField] private float timePrepareAttack;
     [FoldoutGroup("Attack")][SerializeField] private float timeFinishAttack;
+    [FoldoutGroup("Attack")][SerializeField] private List<AudioClip> listSfxAttack = new List<AudioClip>();
     [FoldoutGroup("Attack")][SerializeField] private Transform transAttackPoint;
     [FoldoutGroup("Attack")] private List<AttackObject> listAttack = new List<AttackObject>();
     private WaitForSeconds wfsTimePrepareAttack;
     private WaitForSeconds wfsTimeFinishAttack;
     private Coroutine corouTempAttack;
+    private Coroutine corouAttacking;
+    [FoldoutGroup("Attack")] private AttackObject originalAttack;
+    [FoldoutGroup("Attack")] private float originalPrepareTime;
+    [FoldoutGroup("Attack")] private float originalFinishTime;
+    [FoldoutGroup("Attack")] private List<AudioClip> originalSfxAtk = new List<AudioClip>();
 
-    public void OnChangeAttack(AttackObject atk, float prepareTime, float finishTime)
+    public void OnChangeAttack(AttackObject atk, float prepareTime, float finishTime, List<AudioClip> audioatk)
     {
-        SetAttack(atk, prepareTime, finishTime);
+        SetAttack(atk, prepareTime, finishTime, audioatk);
     }
 
-    public void OnTemporaryChangeAttack(AttackObject atk, float prepareTime, float finishTime, float temporaryTime)
+    public void OnTemporaryChangeAttack(AttackObject atk, float prepareTime, float finishTime, float temporaryTime, List<AudioClip> sfxatk)
     {
         if (corouTempAttack != null)
         {
             StopCoroutine(corouTempAttack);
         }
-        corouTempAttack = StartCoroutine(TemporaryChangeAttack(atk, prepareTime, finishTime, temporaryTime));
+        corouTempAttack = StartCoroutine(TemporaryChangeAttack(atk, prepareTime, finishTime, temporaryTime, sfxatk));
     }
 
-    private IEnumerator TemporaryChangeAttack(AttackObject atk, float prepareTime, float finishTime, float temporaryTime)
+    private IEnumerator TemporaryChangeAttack(AttackObject atk, float prepareTime, float finishTime, float temporaryTime, List<AudioClip> sfxatk)
     {
-        AttackObject originalAttack = prefabAttack;
-        float originalPrepareTime = timePrepareAttack;
-        float originalFinishTime = timeFinishAttack;
+        originalPrepareTime = timePrepareAttack;
+        originalFinishTime = timeFinishAttack;
+        originalSfxAtk = listSfxAttack;
+        originalAttack = prefabAttack;
 
-        SetAttack(atk, prepareTime, finishTime);
+        SetAttack(atk, prepareTime, finishTime, sfxatk);
 
         yield return new WaitForSeconds(temporaryTime);
 
-        SetAttack(originalAttack, originalPrepareTime, originalFinishTime);
+        SetAttack(originalAttack, originalPrepareTime, originalFinishTime, originalSfxAtk);
+
+        originalAttack = null;
+        originalPrepareTime = 0;
+        originalFinishTime = 0;
+        originalSfxAtk = null;
     }
 
-    private void SetAttack(AttackObject atk, float prepareTime, float finishTime)
+    private void SetAttack(AttackObject atk, float prepareTime, float finishTime, List<AudioClip> sfxatk)
     {
         prefabAttack = atk;
         currentAttack = atk;
         timePrepareAttack = prepareTime;
         timeFinishAttack = finishTime;
+        listSfxAttack = sfxatk;
         wfsTimePrepareAttack = new WaitForSeconds(timePrepareAttack);
         wfsTimeFinishAttack = new WaitForSeconds(timeFinishAttack);
     }
 
     private void Attacking()
     {
-        if (currentAttack != null && !onGrab)
+        if (currentAttack != null)
         {
-            StartCoroutine(PerformAttack());
+            corouAttacking = StartCoroutine(PerformAttack());
         }
     }
 
@@ -309,12 +315,14 @@ public class BasicPlayerController : MonoBehaviour
             attack = attackInstance.GetComponent<AttackObject>();
             listAttack.Add(attack);
         }
-
+        int random = Random.Range(0, listSfxAttack.Count);
+        sfxAudioSource.PlayOneShot(listSfxAttack[random]);
         attack.transform.SetPositionAndRotation(transAttackPoint.position, transAttackPoint.rotation);
         attack.gameObject.SetActive(true);
 
         yield return wfsTimeFinishAttack;
 
+        corouAttacking = null;
         playerState = PlayerState.PlayerMoving;
     }
 
@@ -349,52 +357,193 @@ public class BasicPlayerController : MonoBehaviour
             IInteractable interactable = hits[0].collider.GetComponent<IInteractable>();
             Debug.Log(hits[0].collider.name);
             if (interactable != null)
-            {
                 interactable.Interact();
-            }
         }
-    }
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawLine(transAttackPoint.position + interactOffsetPos, transAttackPoint.position + transform.forward * interactRadius);
-        Gizmos.DrawWireSphere(transAttackPoint.position + interactOffsetPos + transform.forward * interactRadius, interactDistance);
     }
     #endregion
 
-    #region Grabing
-    [FoldoutGroup("Grabing")] public Transform transGrab;
-    [FoldoutGroup("Grabing")] private bool onGrab;
-    [FoldoutGroup("Grabing")] private GameObject objGrab;
-    [FoldoutGroup("Grabing")][SerializeField] private float MoveSpeedGrab = 0.25f;
+    #region Grabing & Throw
+    [FoldoutGroup("Grabing & Throw")] public Transform transGrab;
+    [FoldoutGroup("Grabing & Throw")] private bool onGrab;
+    [FoldoutGroup("Grabing & Throw")] private GameObject objGrab;
+    [FoldoutGroup("Grabing & Throw")][SerializeField] private float MoveSpeedGrab = 0.25f;
+    [FoldoutGroup("Grabing & Throw")][SerializeField] private float timeGrabThrow = 0.5f;
+    [FoldoutGroup("Grabing & Throw")][SerializeField] private float timePlantSeed = 1f;
+    [FoldoutGroup("Grabing & Throw")] private WaitForSeconds wfsTimeGrabThrow;
+    [FoldoutGroup("Grabing & Throw")] private WaitForSeconds wfsTimePlantSeed;
+
     public void SetObjectGrab(GameObject grab)
     {
-        onGrab = true;
-        objGrab = grab;
+        StartCoroutine(IeGrabThrow(true, grab));
     }
     private void ThrowObject()
     {
+        Seed seed = objGrab.GetComponent<Seed>();
+        if (seed != null)
+        {
+            Vector3Int area = grid.WorldToCell(transform.position);
+            int index = -1;
+            if (gridManagement.CheckPlayerCanPlantSeed(area, out index))
+            {
+                StartCoroutine(IePlantSeed(seed, index));
+                return;
+            }
+        }
+        StartCoroutine(IeGrabThrow(false, null));
+    }
+    IEnumerator IeGrabThrow(bool isGrab, GameObject obj)
+    {
+        playerState = PlayerState.PlayerAction;
+        if (_hasAnimator) _animator.SetTrigger(isGrab ? _animIDGrab : _animIDThrow);
+        yield return wfsTimeGrabThrow;
+        if (isGrab)
+            onGrab = true;
+        else
+        {
+            onGrab = false;
+            objGrab.GetComponent<IThrowable>().Throw();
+        }
+        objGrab = obj;
+        playerState = PlayerState.PlayerMoving;
+    }
+    IEnumerator IePlantSeed(Seed seed, int index)
+    {
+        playerState = PlayerState.PlayerAction;
+        if (_hasAnimator)
+            _animator.SetTrigger("Plant Seed");
+        yield return wfsTimePlantSeed;
         onGrab = false;
-        objGrab.GetComponent<IThrowable>().Throw();
+        seed.PlantSeed(index);
         objGrab = null;
+        yield return wfsTimePlantSeed;
+        playerState = PlayerState.PlayerMoving;
     }
     #endregion
 
     #region Using Equipment
     void UsingEquipment()
     {
+        if (prefabAttack == null) return;
         switch (prefabAttack.nameAtk)
         {
             case "Shovel Slash":
+                StartCoroutine(IeShovelDig());
                 break;
         }
     }
-    void ShovelDig()
+    #region Shovel Digging
+    [FoldoutGroup("Using Equipment")]
+    [FoldoutGroup("Using Equipment/Shovel Digging")][SerializeField] private List<AudioClip> listAudioDig;
+    [FoldoutGroup("Using Equipment/Shovel Digging")][SerializeField] private List<AudioClip> listAudioPileUp;
+    [FoldoutGroup("Using Equipment/Shovel Digging")][SerializeField] private LayerMask layerGroundDigging;
+    [FoldoutGroup("Using Equipment/Shovel Digging")][SerializeField] private float distanceRayDig = 0.25f;
+    [FoldoutGroup("Using Equipment/Shovel Digging")][SerializeField] private GridManagement gridManagement => GameplayManager.instance.gridManagement;
+    [FoldoutGroup("Using Equipment/Shovel Digging")][SerializeField] private Grid grid => gridManagement.grid;
+    [FoldoutGroup("Using Equipment/Shovel Digging")][SerializeField] private float timeDurationDigPileUp;
+    [FoldoutGroup("Using Equipment/Shovel Digging")] WaitForSeconds wfsTimeDurationDigPileUp;
+    IEnumerator IeShovelDig()
     {
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position + (0.1f * Vector3.up), Vector3.down, out hit, distanceRayDig, layerGroundDigging))
+        {
+            playerState = PlayerState.PlayerAction;
+            int indexOut = -1;
+            Vector3Int gridPosition = grid.WorldToCell(hit.point);
 
-
+            // Do Pile Up
+            if (gridManagement.CheckAreaIsOcupied(gridPosition, out indexOut))
+            {
+                if (_hasAnimator) _animator.SetTrigger(_animIDPileUp);
+                int random = Random.Range(0, listAudioPileUp.Count);
+                sfxAudioSource.PlayOneShot(listAudioPileUp[random]);
+                yield return wfsTimeDurationDigPileUp;
+                gridManagement.RemoveAreaData(indexOut);
+            }
+            // Digging
+            else
+            {
+                if (_hasAnimator) _animator.SetTrigger(_animIDDig);
+                int random = Random.Range(0, listAudioDig.Count);
+                sfxAudioSource.PlayOneShot(listAudioDig[random]);
+                yield return wfsTimeDurationDigPileUp;
+                gridManagement.AddAreaData(gridPosition);
+            }
+            yield return wfsTimeDurationDigPileUp;
+            playerState = PlayerState.PlayerMoving;
+        }
     }
+    #endregion
+    #endregion
 
+    #region Play Music
+    [FoldoutGroup("Play Music")][SerializeField] private float MoveSpeedPlayMusic = 4;
+    [FoldoutGroup("Play Music")][SerializeField] private int indexPlayMusic = -1;
+    [FoldoutGroup("Play Music")][SerializeField] private LayerMask musicableLayer;
+    [FoldoutGroup("Play Music")][SerializeField] private float musicableRadius;
+    [FoldoutGroup("Play Music")] private float timeDurationPlaySound;
+    [FoldoutGroup("Play Music")] private WaitForSeconds wfsTimeDurationPlaySound;
+    [FoldoutGroup("Play Music")][SerializeField] List<MusicData> listDataMusic = new List<MusicData>();
+    public void AddNewMusic(MusicData data)
+    {
+        listDataMusic.Add(data);
+        indexPlayMusic = listDataMusic.Count - 1;
+        timeDurationPlaySound = listDataMusic[indexPlayMusic].timeDuration;
+        wfsTimeDurationPlaySound = new WaitForSeconds(timeDurationPlaySound);
+    }
+    public void PlayMusic()
+    {
+        if (listDataMusic.Count == 0) return;
+        StartCoroutine(IePlayMusic());
+    }
+    IEnumerator IePlayMusic()
+    {
+        playerState = PlayerState.PlayerPlayMusic;
+        if (_hasAnimator) _animator.SetTrigger(_animIDPlayMusic);
+        sfxAudioSource.PlayOneShot(listDataMusic[indexPlayMusic].audioClip);
+        yield return wfsTimeDurationPlaySound;
+        Collider[] hits = Physics.OverlapSphere(transform.position, musicableRadius, layerInteractable);
+        foreach (var hitcollider in hits)
+        {
+            IMusicable musicable = hitcollider.GetComponent<IMusicable>();
+            if (musicable != null) musicable.Music(listDataMusic[indexPlayMusic]);
+        }
+        playerState = PlayerState.PlayerMoving;
+    }
+    public void ChangeMusic(bool next)
+    {
+        if (listDataMusic.Count == 0) return;
+        indexPlayMusic = indexPlayMusic + (next ? 1 : -1);
+        indexPlayMusic = indexPlayMusic < 0 ? listDataMusic.Count - 1 : indexPlayMusic > listDataMusic.Count - 1 ? 0 : indexPlayMusic;
+        timeDurationPlaySound = listDataMusic[indexPlayMusic].timeDuration;
+        wfsTimeDurationPlaySound = new WaitForSeconds(timeDurationPlaySound);
+    }
+    #endregion
+
+    #region Damage
+    [FoldoutGroup("Damage")] float timeDurationDamage = 0.25f;
+    [FoldoutGroup("Damage")] WaitForSeconds wfsTimeDurationDamage;
+    [FoldoutGroup("Damage")][Range(0.001f, 0.1f)][SerializeField] private float stillTreshold = 0.05f;
+    public void Damage(AttackObject atkobj, AudioClip clip)
+    {
+        if (playerState == PlayerState.PlayerDodging) return;
+        playerState = PlayerState.PlayerOnDamage;
+        StopAllCoroutines();
+        corouAttacking = null;
+        if (originalAttack != null)
+            SetAttack(originalAttack, originalPrepareTime, originalFinishTime, originalSfxAtk);
+        StartCoroutine(IeOnDamage(atkobj, clip));
+    }
+    IEnumerator IeOnDamage(AttackObject atkobj, AudioClip clip)
+    {
+        yield return new WaitForFixedUpdate();
+        sfxAudioSource.PlayOneShot(clip);
+        if (_hasAnimator) _animator.SetTrigger(_animIDHurt);
+        if (atkobj.forcePush > 0)
+            rb.AddForce(atkobj.forcePush * atkobj.transform.forward, ForceMode.Impulse);
+        yield return new WaitUntil(() => rb.velocity.magnitude < stillTreshold);
+        yield return wfsTimeDurationDamage;
+        playerState = PlayerState.PlayerMoving;
+    }
     #endregion
     #endregion
 
@@ -403,20 +552,34 @@ public class BasicPlayerController : MonoBehaviour
     private bool _hasAnimator;
     private int _animIDSpeed;
     private int _animIDGrounded;
-    private int _animIDJump;
     private int _animIDFreeFall;
     private int _animIDDodge;
     private int _animIDAttack;
+    private int _animIDPlayMusic;
+    private int _animIDDig;
+    private int _animIDPileUp;
+    private int _animIDThrow;
+    private int _animIDGrab;
+    private int _animIDHurt;
     private void AssignAnimationIDs()
     {
         _animIDSpeed = Animator.StringToHash("Speed");
         _animIDGrounded = Animator.StringToHash("Grounded");
-        _animIDJump = Animator.StringToHash("Jump");
         _animIDFreeFall = Animator.StringToHash("FreeFall");
+        _animIDDodge = Animator.StringToHash("Dodging");
+        _animIDAttack = Animator.StringToHash("Attacking");
+        _animIDPlayMusic = Animator.StringToHash("Playing Music");
+        _animIDDig = Animator.StringToHash("Digging");
+        _animIDPileUp = Animator.StringToHash("Piling Up");
+        _animIDGrab = Animator.StringToHash("Grabbing");
+        _animIDThrow = Animator.StringToHash("Throwing");
+        _animIDHurt = Animator.StringToHash("Hurt");
     }
     #endregion
 
     #region Player Sfx
+    [FoldoutGroup("Player SFX")][SerializeField] private AudioSource sfxAudioSource;
+    #region Player FootStep
     [FoldoutGroup("Player SFX")] public AudioClip LandingAudioClip;
     [FoldoutGroup("Player SFX")] public AudioClip[] FootstepAudioClips;
     [FoldoutGroup("Player SFX")][Range(0, 1)] public float FootstepAudioVolume = 0.5f;
@@ -426,7 +589,7 @@ public class BasicPlayerController : MonoBehaviour
         {
             if (FootstepAudioClips.Length > 0)
             {
-                var index = Random.Range(0, FootstepAudioClips.Length);
+                var index = UnityEngine.Random.Range(0, FootstepAudioClips.Length);
                 AudioSource.PlayClipAtPoint(FootstepAudioClips[index], transform.TransformPoint(transform.position), FootstepAudioVolume);
             }
         }
@@ -439,4 +602,14 @@ public class BasicPlayerController : MonoBehaviour
         }
     }
     #endregion
+    #endregion
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(transAttackPoint.position + interactOffsetPos, transAttackPoint.position + transform.forward * interactRadius);
+        Gizmos.DrawWireSphere(transAttackPoint.position + interactOffsetPos + transform.forward * interactRadius, interactDistance);
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(transform.position, musicableRadius);
+    }
 }

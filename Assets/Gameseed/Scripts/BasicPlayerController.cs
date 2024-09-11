@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 public class BasicPlayerController : MonoBehaviour, IDamageable
@@ -94,7 +95,7 @@ public class BasicPlayerController : MonoBehaviour, IDamageable
     }
     void Attack_Performed(InputAction.CallbackContext context)
     {
-        if (playerState == PlayerState.PlayerMoving)
+        if (playerState == PlayerState.PlayerMoving && !onGrab)
             Attacking();
     }
     void Dodge_Performed(InputAction.CallbackContext context)
@@ -202,8 +203,10 @@ public class BasicPlayerController : MonoBehaviour, IDamageable
     #endregion
 
     #region Dodging
+    [FoldoutGroup("Dodge")][SerializeField] Collider bodyCollider;
     [FoldoutGroup("Dodge")][SerializeField] float forceDodge;
-    [FoldoutGroup("Dodge")][SerializeField] float timeDodge;
+    [FoldoutGroup("Dodge")] public float timeDodge;
+    [FoldoutGroup("Dodge")] public UnityAction eventActionDodge;
     WaitForSeconds wfsTimeDodge;
     private void Dodging()
     {
@@ -216,12 +219,15 @@ public class BasicPlayerController : MonoBehaviour, IDamageable
     }
     IEnumerator IeDodging()
     {
+        eventActionDodge?.Invoke();
+        bodyCollider.enabled = false;
         playerState = PlayerState.PlayerDodging;
         if (_hasAnimator) _animator.SetBool(_animIDDodge, true);
         rb.AddForce(transform.forward * forceDodge, ForceMode.Impulse);
         yield return wfsTimeDodge;
         if (_hasAnimator) _animator.SetBool(_animIDDodge, false);
         rb.velocity = Vector3.zero;
+        bodyCollider.enabled = true;
         playerState = PlayerState.PlayerMoving;
     }
     #endregion
@@ -243,10 +249,13 @@ public class BasicPlayerController : MonoBehaviour, IDamageable
     [FoldoutGroup("Attack")] private float originalPrepareTime;
     [FoldoutGroup("Attack")] private float originalFinishTime;
     [FoldoutGroup("Attack")] private List<AudioClip> originalSfxAtk = new List<AudioClip>();
+    [FoldoutGroup("Attack")] public UnityAction<AttackObject, float> eventOnChangeAttack;
+    [FoldoutGroup("Attack")] public UnityAction eventActionAttack;
 
     public void OnChangeAttack(AttackObject atk, float prepareTime, float finishTime, List<AudioClip> audioatk)
     {
         SetAttack(atk, prepareTime, finishTime, audioatk);
+        eventOnChangeAttack?.Invoke(atk, prepareTime + finishTime);
     }
 
     public void OnTemporaryChangeAttack(AttackObject atk, float prepareTime, float finishTime, float temporaryTime, List<AudioClip> sfxatk)
@@ -298,6 +307,7 @@ public class BasicPlayerController : MonoBehaviour, IDamageable
 
     private IEnumerator PerformAttack()
     {
+        eventActionAttack?.Invoke();
         playerState = PlayerState.PlayerAttack;
         rb.velocity = Vector3.zero;
 
@@ -439,13 +449,15 @@ public class BasicPlayerController : MonoBehaviour, IDamageable
     [FoldoutGroup("Using Equipment/Shovel Digging")][SerializeField] private float distanceRayDig = 0.25f;
     [FoldoutGroup("Using Equipment/Shovel Digging")][SerializeField] private GridManagement gridManagement => GameplayManager.instance.gridManagement;
     [FoldoutGroup("Using Equipment/Shovel Digging")][SerializeField] private Grid grid => gridManagement.grid;
-    [FoldoutGroup("Using Equipment/Shovel Digging")][SerializeField] private float timeDurationDigPileUp;
+    [FoldoutGroup("Using Equipment/Shovel Digging")] public float timeDurationDigPileUp;
     [FoldoutGroup("Using Equipment/Shovel Digging")] WaitForSeconds wfsTimeDurationDigPileUp;
+    [FoldoutGroup("Using Equipment/Shovel Digging")] public UnityAction eventActionDigPileUp;
     IEnumerator IeShovelDig()
     {
         RaycastHit hit;
         if (Physics.Raycast(transform.position + (0.1f * Vector3.up), Vector3.down, out hit, distanceRayDig, layerGroundDigging))
         {
+            eventActionDigPileUp?.Invoke();
             playerState = PlayerState.PlayerAction;
             int indexOut = -1;
             Vector3Int gridPosition = grid.WorldToCell(hit.point);
@@ -477,18 +489,22 @@ public class BasicPlayerController : MonoBehaviour, IDamageable
 
     #region Play Music
     [FoldoutGroup("Play Music")][SerializeField] private float MoveSpeedPlayMusic = 4;
-    [FoldoutGroup("Play Music")][SerializeField] private int indexPlayMusic = -1;
+    [FoldoutGroup("Play Music")][HideInInspector] public int indexPlayMusic = -1;
     [FoldoutGroup("Play Music")][SerializeField] private LayerMask musicableLayer;
     [FoldoutGroup("Play Music")][SerializeField] private float musicableRadius;
-    [FoldoutGroup("Play Music")] private float timeDurationPlaySound;
+    [FoldoutGroup("Play Music")][HideInInspector] public float timeDurationPlaySound;
     [FoldoutGroup("Play Music")] private WaitForSeconds wfsTimeDurationPlaySound;
-    [FoldoutGroup("Play Music")][SerializeField] List<MusicData> listDataMusic = new List<MusicData>();
+    [FoldoutGroup("Play Music")] public List<MusicData> listDataMusic = new List<MusicData>();
+    [FoldoutGroup("Play Music")] public UnityAction eventOnAddMusic;
+    [FoldoutGroup("Play Music")] public UnityAction eventActionMusic;
+    [FoldoutGroup("Play Music")] public UnityAction<bool> eventOnChangeMusic;
     public void AddNewMusic(MusicData data)
     {
         listDataMusic.Add(data);
         indexPlayMusic = listDataMusic.Count - 1;
         timeDurationPlaySound = listDataMusic[indexPlayMusic].timeDuration;
         wfsTimeDurationPlaySound = new WaitForSeconds(timeDurationPlaySound);
+        eventOnAddMusic?.Invoke();
     }
     public void PlayMusic()
     {
@@ -497,6 +513,7 @@ public class BasicPlayerController : MonoBehaviour, IDamageable
     }
     IEnumerator IePlayMusic()
     {
+        eventActionMusic?.Invoke();
         playerState = PlayerState.PlayerPlayMusic;
         if (_hasAnimator) _animator.SetTrigger(_animIDPlayMusic);
         sfxAudioSource.PlayOneShot(listDataMusic[indexPlayMusic].audioClip);
@@ -511,11 +528,12 @@ public class BasicPlayerController : MonoBehaviour, IDamageable
     }
     public void ChangeMusic(bool next)
     {
-        if (listDataMusic.Count == 0) return;
+        if (listDataMusic.Count <= 1) return;
         indexPlayMusic = indexPlayMusic + (next ? 1 : -1);
         indexPlayMusic = indexPlayMusic < 0 ? listDataMusic.Count - 1 : indexPlayMusic > listDataMusic.Count - 1 ? 0 : indexPlayMusic;
         timeDurationPlaySound = listDataMusic[indexPlayMusic].timeDuration;
         wfsTimeDurationPlaySound = new WaitForSeconds(timeDurationPlaySound);
+        eventOnChangeMusic?.Invoke(next);
     }
     #endregion
 
@@ -525,7 +543,6 @@ public class BasicPlayerController : MonoBehaviour, IDamageable
     [FoldoutGroup("Damage")][Range(0.001f, 0.1f)][SerializeField] private float stillTreshold = 0.05f;
     public void Damage(AttackObject atkobj, AudioClip clip)
     {
-        if (playerState == PlayerState.PlayerDodging) return;
         playerState = PlayerState.PlayerOnDamage;
         StopAllCoroutines();
         corouAttacking = null;

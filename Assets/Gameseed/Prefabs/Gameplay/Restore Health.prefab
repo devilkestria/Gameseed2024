@@ -146,7 +146,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c42dcd01d264b3d41b4d5bd84739bfd4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  healthPoint: 5
+  healthPoint: 2
   onActive: 1
   overalapRadius: 0.8
   layerOverlap:

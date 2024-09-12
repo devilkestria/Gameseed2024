@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Cinemachine;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
@@ -9,6 +10,10 @@ public class BasicPlayerController : MonoBehaviour, IDamageable
 {
     #region Player State
     public PlayerState playerState;
+    public void ChangeState(PlayerState state)
+    {
+        playerState = state;
+    }
     #endregion
     #region Unity Function
     void OnDestroy()
@@ -562,6 +567,26 @@ public class BasicPlayerController : MonoBehaviour, IDamageable
         playerState = PlayerState.PlayerMoving;
     }
     #endregion
+
+    #region Revive
+    public void Revive()
+    {
+        if (_hasAnimator) _animator.SetTrigger(_animIDRevive);
+    }
+    #endregion
+
+    #region Got Item
+    [FoldoutGroup("Got Item")][SerializeField] private CinemachineVirtualCamera camZoomInFocusPlayer;
+    public void CamOnGetItem(bool value)
+    {
+        if (_hasAnimator) _animator.SetTrigger(_animIDLookCamera);
+        camZoomInFocusPlayer.Priority = value ? 2 : 0;
+    }
+    public void PlayerOnGetItem(bool value)
+    {
+        if (_hasAnimator) _animator.SetBool(_animIDGotItem, value);
+    }
+    #endregion
     #endregion
 
     #region Animation
@@ -578,6 +603,9 @@ public class BasicPlayerController : MonoBehaviour, IDamageable
     private int _animIDThrow;
     private int _animIDGrab;
     private int _animIDHurt;
+    private int _animIDRevive;
+    private int _animIDLookCamera;
+    private int _animIDGotItem;
     private void AssignAnimationIDs()
     {
         _animIDSpeed = Animator.StringToHash("Speed");
@@ -591,6 +619,9 @@ public class BasicPlayerController : MonoBehaviour, IDamageable
         _animIDGrab = Animator.StringToHash("Grabbing");
         _animIDThrow = Animator.StringToHash("Throwing");
         _animIDHurt = Animator.StringToHash("Hurt");
+        _animIDRevive = Animator.StringToHash("Revive");
+        _animIDLookCamera = Animator.StringToHash("Look Camera");
+        _animIDGotItem = Animator.StringToHash("Got Item");
     }
     #endregion
 

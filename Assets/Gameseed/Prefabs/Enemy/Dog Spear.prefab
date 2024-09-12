@@ -353,7 +353,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1384739919705592899, guid: 8a03800bdf769294387f358dff7bd6b8, type: 3}
       propertyPath: m_Name
-      value: Dog Spear 1
+      value: Dog Spear
       objectReference: {fileID: 0}
     - target: {fileID: 1657472035763495783, guid: 8a03800bdf769294387f358dff7bd6b8, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -575,6 +575,10 @@ PrefabInstance:
       propertyPath: patrolRadius
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 3795064631769525014, guid: 8a03800bdf769294387f358dff7bd6b8, type: 3}
+      propertyPath: prefabAttack
+      value: 
+      objectReference: {fileID: 8019992738615131041, guid: bcce23566558ce243a8d433a791709d5, type: 3}
     - target: {fileID: 3795064631769525014, guid: 8a03800bdf769294387f358dff7bd6b8, type: 3}
       propertyPath: timeFinishAttack
       value: 1.4333333

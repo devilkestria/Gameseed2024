@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 3110868079243770361}
   - component: {fileID: 1492456237608150716}
   - component: {fileID: 2748455080626302617}
-  - component: {fileID: 1285783822311789134}
   m_Layer: 9
   m_Name: Rock 1
   m_TagString: Untagged
@@ -272,18 +271,6 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
---- !u!114 &1285783822311789134
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1814813183001357937}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 034bc47afcbf5e141a58d5c20b7808e4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &489320029204807901
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -479,36 +466,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: rock 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: -5716681864270162303, guid: 13364c0f9ce37184cabbb5b97a61a34d, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: -927199367670048503, guid: 13364c0f9ce37184cabbb5b97a61a34d, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 547510404357227752}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 13364c0f9ce37184cabbb5b97a61a34d, type: 3}
 --- !u!4 &6751132169370411344 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -4216859302048453862, guid: 13364c0f9ce37184cabbb5b97a61a34d, type: 3}
   m_PrefabInstance: {fileID: 1786348224434440778}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &7776466585906041667 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: -927199367670048503, guid: 13364c0f9ce37184cabbb5b97a61a34d, type: 3}
-  m_PrefabInstance: {fileID: 1786348224434440778}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &547510404357227752
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7776466585906041667}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 034bc47afcbf5e141a58d5c20b7808e4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!23 &8347238446465410975 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: -1504981713932161579, guid: 13364c0f9ce37184cabbb5b97a61a34d, type: 3}

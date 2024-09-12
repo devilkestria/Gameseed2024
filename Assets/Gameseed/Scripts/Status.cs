@@ -31,6 +31,8 @@ public class Status : MonoBehaviour, IDamageable
     }
     public void Death()
     {
-        GetComponent<IDeathable>().Death();
+        IDeathable[] listdeath = GetComponents<IDeathable>();
+        foreach (IDeathable deathable in listdeath)
+            deathable.Death();
     }
 }

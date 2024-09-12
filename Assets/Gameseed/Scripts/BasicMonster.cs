@@ -10,7 +10,7 @@ public class BasicMonster : MonoBehaviour, IDamageable, IDeathable
     [FoldoutGroup("Basic Monster")][SerializeField] private Status status;
     [FoldoutGroup("Basic Monster")][SerializeField] private EnemyState state;
     [FoldoutGroup("Basic Monster")][SerializeField] private Rigidbody rb;
-    [FoldoutGroup("Basic Monster")][SerializeField] private Collider collider;
+    [FoldoutGroup("Basic Monster")][SerializeField] private Collider bodyCollider;
     [FoldoutGroup("Basic Monster")] public int IndexMonster;
     [FoldoutGroup("Basic Monster")] public bool isActive;
     [FoldoutGroup("Basic Monster")] private Transform target;
@@ -25,7 +25,7 @@ public class BasicMonster : MonoBehaviour, IDamageable, IDeathable
     {
         if (!agent) agent = GetComponent<NavMeshAgent>();
         if (!rb) rb = GetComponent<Rigidbody>();
-        if (!collider) collider = GetComponent<Collider>();
+        if (!bodyCollider) bodyCollider = GetComponent<Collider>();
         if (!status) status = GetComponent<Status>();
         if (!_animator) _animator = GetComponentInChildren<Animator>();
         _hasAnimator = _animator != null;
@@ -323,7 +323,7 @@ public class BasicMonster : MonoBehaviour, IDamageable, IDeathable
         yield return null;
         rb.isKinematic = true;
         rb.useGravity = false;
-        collider.enabled = false;
+        bodyCollider.enabled = false;
         agent.enabled = false;
         isActive = false;
 
@@ -352,7 +352,7 @@ public class BasicMonster : MonoBehaviour, IDamageable, IDeathable
     {
         if (_hasAnimator) _animator.SetTrigger(_animIDSpawn);
         yield return wfsTimeDurationSpawn;
-        collider.enabled = true;
+        bodyCollider.enabled = true;
         agent.enabled = true;
         rb.useGravity = false;
         rb.isKinematic = false;

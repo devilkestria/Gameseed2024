@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using EPOOutline;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Events;
 [RequireComponent(typeof(Outlinable))]
 public class ChangeWeapon : MonoBehaviour, IInteractable
 {
@@ -15,6 +16,7 @@ public class ChangeWeapon : MonoBehaviour, IInteractable
     [FoldoutGroup("Show Interact")][SerializeField] private LayerMask layerInteract;
     [FoldoutGroup("Show Interact")][SerializeField] private GameObject objInteract;
     [FoldoutGroup("Show Interact")][SerializeField] private Outlinable outlinable;
+    [FoldoutGroup("Show Interact")] public UnityEvent eventInteract;
     private void Start()
     {
         if (!outlinable) outlinable = GetComponent<Outlinable>();
@@ -25,6 +27,7 @@ public class ChangeWeapon : MonoBehaviour, IInteractable
     {
         playerController.OnChangeAttack(attackObject, timePrepareAttack, timeFinishAttack, listsfxAtk);
         gameObject.SetActive(false);
+        eventInteract?.Invoke();
     }
 
     private void Update()

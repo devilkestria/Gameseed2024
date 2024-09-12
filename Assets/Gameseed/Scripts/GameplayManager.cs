@@ -19,13 +19,15 @@ public class GameplayManager : MonoBehaviour
     {
         playerObj = player;
     }
-    public List<BasicPlant> listPlantSeed = new List<BasicPlant>();
-    public List<Seed> listSeed = new List<Seed>();
-    public List<RestoreHealth> listRestoreHealth = new List<RestoreHealth>();
-    public List<PowerUp> listPowerUp = new List<PowerUp>();
-    public List<GameObject> listEffect = new List<GameObject>();
-    public List<BasicMonster> listMonster = new List<BasicMonster>();
+
+    [FoldoutGroup("Object Pulling")] public List<BasicPlant> listPlantSeed = new List<BasicPlant>();
+    [FoldoutGroup("Object Pulling")] public List<Seed> listSeed = new List<Seed>();
+    [FoldoutGroup("Object Pulling")] public List<RestoreHealth> listRestoreHealth = new List<RestoreHealth>();
+    [FoldoutGroup("Object Pulling")] public List<PowerUp> listPowerUp = new List<PowerUp>();
+    [FoldoutGroup("Object Pulling")] public List<GameObject> listEffect = new List<GameObject>();
+    [FoldoutGroup("Object Pulling")] public List<BasicMonster> listMonster = new List<BasicMonster>();
     public UiBoard uiBoard;
     public GridManagement gridManagement;
+    public BlackscreenManager bsManager;
     public StorageManagement storageManagement;
 }

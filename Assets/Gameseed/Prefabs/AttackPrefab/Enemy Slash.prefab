@@ -131,7 +131,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   onActive: 0
   nameAtk: Enemy Slash
-  damageValue: 1
+  damageValue: 2
   timeDisapear: 0.5
   forwardDirection: {x: 0, y: 0, z: 0}
   forceForward: 0

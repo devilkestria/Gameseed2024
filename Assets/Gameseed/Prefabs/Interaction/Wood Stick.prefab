@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 6280208737019706899}
   - component: {fileID: 2207422199395582304}
   - component: {fileID: 4992785259754088190}
-  - component: {fileID: 2797509545034177012}
   m_Layer: 9
   m_Name: Wood Stick
   m_TagString: Untagged
@@ -28,7 +27,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3787713818844957265}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -10, y: 1, z: -5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -71,8 +70,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attackObject: {fileID: 8019992738615131041, guid: e64faea52f967724287d77d737ca2301, type: 3}
-  timePrepareAttack: 0.5
-  timeFinishAttack: 0.5
+  timePrepareAttack: 0.4666667
+  timeFinishAttack: 1.033333
   listsfxAtk:
   - {fileID: 8300000, guid: 9c44d4fc76f84054db6e4b6829ed78bd, type: 3}
   - {fileID: 8300000, guid: adde79beac1234045a5116c4e0797f43, type: 3}
@@ -83,6 +82,21 @@ MonoBehaviour:
     m_Bits: 8
   objInteract: {fileID: 7584953079229987902}
   outlinable: {fileID: 4992785259754088190}
+  eventInteract:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: StoryProgressManager, Assembly-CSharp
+        m_MethodName: GotWoodStick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &4992785259754088190
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -98,23 +112,7 @@ MonoBehaviour:
   complexMaskingMode: 0
   drawingMode: 1
   outlineLayer: 0
-  outlineTargets:
-  - IsVisible: 1
-    CutoutMask: 8
-    edgeDilateAmount: 5
-    frontEdgeDilateAmount: 5
-    backEdgeDilateAmount: 5
-    renderer: {fileID: 0}
-    SubmeshIndex: 0
-    BoundsMode: 0
-    Bounds:
-      m_Center: {x: 0, y: 0, z: 0}
-      m_Extent: {x: 0.5, y: 0.5, z: 0.5}
-    CutoutThreshold: 0.5
-    CullMode: 2
-    cutoutTextureName: 
-    DilateRenderingMode: 0
-    cutoutTextureIndex: 0
+  outlineTargets: []
   renderStyle: 2
   outlineParameters:
     enabled: 1
@@ -140,18 +138,6 @@ MonoBehaviour:
     fillPass:
       shader: {fileID: 0}
       serializedProperties: []
---- !u!114 &2797509545034177012
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3787713818844957265}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 034bc47afcbf5e141a58d5c20b7808e4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &7584953079229987902
 GameObject:
   m_ObjectHideFlags: 0

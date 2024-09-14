@@ -132,7 +132,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   onActive: 0
   nameAtk: Enemy Projectile
-  damageValue: 5
+  damageValue: 2
   timeDisapear: 5
   forwardDirection: {x: 0, y: 0, z: 5}
   forceForward: 5

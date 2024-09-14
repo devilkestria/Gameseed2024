@@ -13,14 +13,14 @@ public class UiBoard : MonoBehaviour
     [FoldoutGroup("Ui Board")][SerializeField] private Image imgBoard;
     [FoldoutGroup("Ui Board")][SerializeField] private JVTextMeshProUGUI txtJava;
     [FoldoutGroup("Ui Board")][SerializeField] private Button btnBoard;
-    [FoldoutGroup("Ui Board")] private PlayerInput playerInput;
+    [FoldoutGroup("Ui Board")][SerializeField] private BasicPlayerController playerController;
     private void Start()
     {
-        if (playerInput == null) playerInput = GameplayManager.instance.playerObj.GetComponent<PlayerInput>();
+        if (playerController == null) playerController = GameplayManager.instance.playerObj.GetComponent<BasicPlayerController>();
     }
     public void OpenBoard(Sprite img)
     {
-        playerInput.actions.Disable();
+        playerController.ChangeState(PlayerState.PlayerIddle);
         panelBoard.SetActive(true);
         imgBoard.gameObject.SetActive(true);
         imgBoard.sprite = img;
@@ -28,15 +28,25 @@ public class UiBoard : MonoBehaviour
     }
     public void OpenBoard(string text)
     {
-        playerInput.actions.Disable();
+        playerController.ChangeState(PlayerState.PlayerIddle);
         panelBoard.SetActive(true);
+        txtJava.gameObject.SetActive(true);
+        txtJava.text = Transliterator.LatinToJava(text);
+        btnBoard.Select();
+    }
+    public void OpenBoard(Sprite img, string text)
+    {
+        playerController.ChangeState(PlayerState.PlayerIddle);
+        panelBoard.SetActive(true);
+        imgBoard.gameObject.SetActive(true);
+        imgBoard.sprite = img;
         txtJava.gameObject.SetActive(true);
         txtJava.text = Transliterator.LatinToJava(text);
         btnBoard.Select();
     }
     public void CloseBoard()
     {
-        playerInput.actions.Enable();
+        playerController.ChangeState(PlayerState.PlayerMoving);
         imgBoard.gameObject.SetActive(false);
         txtJava.gameObject.SetActive(false);
         panelBoard.SetActive(false);

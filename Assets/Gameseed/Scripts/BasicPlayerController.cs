@@ -32,7 +32,8 @@ public class BasicPlayerController : MonoBehaviour, IDamageable
     }
     private void Start()
     {
-        _hasAnimator = TryGetComponent(out _animator);
+        if (_animator) _animator = GetComponent<Animator>();
+        _hasAnimator = _animator != null ? true : false;
         if (!rb) rb = GetComponent<Rigidbody>();
         AssignAnimationIDs();
     }
@@ -165,7 +166,7 @@ public class BasicPlayerController : MonoBehaviour, IDamageable
         }
         //Move Position
         rb.MovePosition(transform.position + movement);
-        if (_hasAnimator) _animator.SetFloat(_animIDSpeed, rb.velocity.magnitude);
+        if (_hasAnimator) _animator.SetFloat(_animIDSpeed, moveDirection.magnitude);
     }
     #endregion
 
@@ -201,7 +202,7 @@ public class BasicPlayerController : MonoBehaviour, IDamageable
         {
             if (_hasAnimator)
             {
-                _animator.SetBool(_animIDFreeFall, true);
+                _animator.SetBool(_animIDFreeFall, rb.velocity.y > 0 ? false : true);
             }
         }
     }
@@ -227,10 +228,9 @@ public class BasicPlayerController : MonoBehaviour, IDamageable
         eventActionDodge?.Invoke();
         bodyCollider.enabled = false;
         playerState = PlayerState.PlayerDodging;
-        if (_hasAnimator) _animator.SetBool(_animIDDodge, true);
+        if (_hasAnimator) _animator.SetTrigger(_animIDDodge);
         rb.AddForce(transform.forward * forceDodge, ForceMode.Impulse);
         yield return wfsTimeDodge;
-        if (_hasAnimator) _animator.SetBool(_animIDDodge, false);
         rb.velocity = Vector3.zero;
         bodyCollider.enabled = true;
         playerState = PlayerState.PlayerMoving;
@@ -406,27 +406,29 @@ public class BasicPlayerController : MonoBehaviour, IDamageable
         }
         StartCoroutine(IeGrabThrow(false, null));
     }
-    IEnumerator IeGrabThrow(bool isGrab, GameObject obj)
+    IEnumerator IeGrabThrow(bool playerGrab, GameObject obj)
     {
         playerState = PlayerState.PlayerAction;
-        if (_hasAnimator) _animator.SetTrigger(isGrab ? _animIDGrab : _animIDThrow);
-        yield return wfsTimeGrabThrow;
-        if (isGrab)
+        if (!onGrab) _animator.SetLayerWeight(1, 1);
+        if (playerGrab)
             onGrab = true;
         else
         {
             onGrab = false;
             objGrab.GetComponent<IThrowable>().Throw();
         }
+        if (_hasAnimator) _animator.SetTrigger(playerGrab ? _animIDGrab : _animIDThrow);
+        yield return wfsTimeGrabThrow;
+        if (!playerGrab) _animator.SetLayerWeight(1, 0);
         objGrab = obj;
         playerState = PlayerState.PlayerMoving;
     }
     IEnumerator IePlantSeed(Seed seed, int index)
     {
         playerState = PlayerState.PlayerAction;
-        if (_hasAnimator)
-            _animator.SetTrigger("Plant Seed");
+        if (_hasAnimator) _animator.SetTrigger(_animIdPlantSeed);
         yield return wfsTimePlantSeed;
+        _animator.SetLayerWeight(1, 0);
         onGrab = false;
         seed.PlantSeed(index);
         objGrab = null;
@@ -520,9 +522,10 @@ public class BasicPlayerController : MonoBehaviour, IDamageable
     {
         eventActionMusic?.Invoke();
         playerState = PlayerState.PlayerPlayMusic;
-        if (_hasAnimator) _animator.SetTrigger(_animIDPlayMusic);
+        if (_hasAnimator) _animator.SetLayerWeight(2, 1);
         sfxAudioSource.PlayOneShot(listDataMusic[indexPlayMusic].audioClip);
         yield return wfsTimeDurationPlaySound;
+        if (_hasAnimator) _animator.SetLayerWeight(2, 0);
         Collider[] hits = Physics.OverlapSphere(transform.position, musicableRadius, layerInteractable);
         foreach (var hitcollider in hits)
         {
@@ -590,18 +593,18 @@ public class BasicPlayerController : MonoBehaviour, IDamageable
     #endregion
 
     #region Animation
-    private Animator _animator;
+    [FoldoutGroup("Animation")][SerializeField] private Animator _animator;
     private bool _hasAnimator;
     private int _animIDSpeed;
     private int _animIDGrounded;
     private int _animIDFreeFall;
     private int _animIDDodge;
     private int _animIDAttack;
-    private int _animIDPlayMusic;
     private int _animIDDig;
     private int _animIDPileUp;
     private int _animIDThrow;
     private int _animIDGrab;
+    private int _animIdPlantSeed;
     private int _animIDHurt;
     private int _animIDRevive;
     private int _animIDLookCamera;
@@ -613,11 +616,11 @@ public class BasicPlayerController : MonoBehaviour, IDamageable
         _animIDFreeFall = Animator.StringToHash("FreeFall");
         _animIDDodge = Animator.StringToHash("Dodging");
         _animIDAttack = Animator.StringToHash("Attacking");
-        _animIDPlayMusic = Animator.StringToHash("Playing Music");
         _animIDDig = Animator.StringToHash("Digging");
         _animIDPileUp = Animator.StringToHash("Piling Up");
         _animIDGrab = Animator.StringToHash("Grabbing");
         _animIDThrow = Animator.StringToHash("Throwing");
+        _animIdPlantSeed = Animator.StringToHash("Plant Seed");
         _animIDHurt = Animator.StringToHash("Hurt");
         _animIDRevive = Animator.StringToHash("Revive");
         _animIDLookCamera = Animator.StringToHash("Look Camera");
@@ -651,7 +654,6 @@ public class BasicPlayerController : MonoBehaviour, IDamageable
     }
     #endregion
     #endregion
-
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;

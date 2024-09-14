@@ -11,19 +11,23 @@ public class MoveArea : MonoBehaviour
     [FoldoutGroup("Move Area")][SerializeField] private BasicPlayerController playerController;
     [FoldoutGroup("Move Area")][SerializeField] private Transform transPlayer;
     [FoldoutGroup("Move Area")][SerializeField] private Collider colliderTrigger;
-    [FoldoutGroup("Move Area")][SerializeField] private bool isOPen;
+    [FoldoutGroup("Move Area")][SerializeField] private bool isOpen;
     [FoldoutGroup("Move Area")][SerializeField] private Transform transSpawn;
+    [FoldoutGroup("Move Area")][SerializeField] private Material openMaterial;
+    [FoldoutGroup("Move Area")][SerializeField] private Renderer render;
     [FoldoutGroup("Move Area")] public UnityEvent eventOnMove;
+    [FoldoutGroup("Move Area")] public UnityEvent eventOnOpen;
     void Start()
     {
         if (!bsManager) bsManager = GameplayManager.instance.bsManager;
         if (!playerController) playerController = GameplayManager.instance.playerObj.GetComponent<BasicPlayerController>();
         if (!transPlayer) transPlayer = playerController.transform;
         if (!colliderTrigger) colliderTrigger = GetComponent<Collider>();
+        if (!render) render = GetComponent<Renderer>();
     }
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player") && isOPen)
+        if (other.CompareTag("Player") && isOpen)
         {
             playerController.ChangeState(PlayerState.PlayerIddle);
             bsManager.eventOnFadeIn += OnMove;
@@ -43,11 +47,14 @@ public class MoveArea : MonoBehaviour
     void PlayerMove()
     {
         bsManager.eventOnFadeOut -= PlayerMove;
+        transPlayer.gameObject.SetActive(true);
         playerController.ChangeState(PlayerState.PlayerMoving);
     }
     public void SetIsOpen(bool value)
     {
-        isOPen = value;
+        isOpen = value;
+        render.material = openMaterial;
         colliderTrigger.isTrigger = value;
+        eventOnOpen?.Invoke();
     }
 }

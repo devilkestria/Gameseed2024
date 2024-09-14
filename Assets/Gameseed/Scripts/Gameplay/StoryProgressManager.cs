@@ -45,6 +45,7 @@ public class StoryProgressManager : MonoBehaviour
     {
         bsManager.eventOnFadeOut -= PlayerMove;
         playerController.ChangeState(PlayerState.PlayerMoving);
+        playerController.gameObject.SetActive(true);
         playerUiManager.gameObject.SetActive(true);
     }
     #endregion
@@ -53,9 +54,11 @@ public class StoryProgressManager : MonoBehaviour
     [FoldoutGroup("Start Game")][SerializeField] GameObject objGateStartEffect;
     [FoldoutGroup("Start Game")][SerializeField] GameObject objCameraTimeline;
     [FoldoutGroup("Start Game")][SerializeField] GameObject objSoundTimeline;
+    [FoldoutGroup("Start Game")][SerializeField] GameObject objPlayerTimeline;
     public void StartGame()
     {
         BgmAudio.Stop();
+        playerController.gameObject.SetActive(false);
         playableDirector.Play();
     }
     public void TimelineEndStartGame()
@@ -69,6 +72,7 @@ public class StoryProgressManager : MonoBehaviour
         bsManager.eventOnFadeIn -= FadeInTimelineStartGame;
         objGateStartEffect.SetActive(false);
         objCameraTimeline.SetActive(false);
+        objPlayerTimeline.SetActive(false);
         PlayBgm(clipField);
         bsManager.eventOnFadeOut += PlayerMove;
         bsManager.FadeOut();
@@ -76,9 +80,7 @@ public class StoryProgressManager : MonoBehaviour
     #endregion
     #region Chapter 1 : Arrive
     [FoldoutGroup("Chapter 1 : Arrival")][SerializeField] private Transform transZ1Spawn;
-    [FoldoutGroup("Chapter 1 : Arrival")][SerializeField] private GameObject objWoodStick;
     [FoldoutGroup("Chapter 1 : Arrival")][SerializeField] private CinemachineVirtualCamera vcOpenShovelArea;
-    [FoldoutGroup("Chapter 1 : Arrival")][SerializeField] private GameObject objShovel;
     [FoldoutGroup("Chapter 1 : Arrival")] bool isPlayerGotShovel = false;
     [FoldoutGroup("Chapter 1 : Arrival")][SerializeField] private GameObject objPrisonShovelArea;
     [FoldoutGroup("Chapter 1 : Arrival")][SerializeField] private float StartHeightPrisonShovelArea;
@@ -112,12 +114,12 @@ public class StoryProgressManager : MonoBehaviour
     {
         yield return wfsTimeTransitioncamera;
         playerController.PlayerOnGetItem(true);
-        objWoodStick.transform.position = playerController.transGrab.position;
-        objWoodStick.transform.LookAt(transPlayerCameraZoom, Vector3.up);
-        objWoodStick.SetActive(true);
         PlayGotItem();
         yield return wfsTimeTransitioncamera;
-        objWoodStick.SetActive(false);
+        yield return wfsTimeTransitioncamera;
+        yield return wfsTimeTransitioncamera;
+        yield return wfsTimeTransitioncamera;
+        yield return wfsTimeTransitioncamera;
         playerController.PlayerOnGetItem(false);
         playerController.CamOnGetItem(false);
         yield return wfsTimeTransitioncamera;
@@ -151,12 +153,8 @@ public class StoryProgressManager : MonoBehaviour
     {
         yield return wfsTimeTransitioncamera;
         playerController.PlayerOnGetItem(true);
-        objShovel.transform.position = playerController.transGrab.position;
-        objShovel.transform.LookAt(transPlayerCameraZoom, Vector3.up);
-        objShovel.SetActive(true);
         PlayGotItem();
         yield return wfsTimeTransitioncamera;
-        objShovel.SetActive(false);
         playerController.PlayerOnGetItem(false);
         playerController.CamOnGetItem(false);
         isPlayerGotShovel = true;
@@ -247,6 +245,7 @@ public class StoryProgressManager : MonoBehaviour
         BgmAudio.Play();
     }
     #endregion
+
     #region SFX Sound
     [FoldoutGroup("SFX Sound")][SerializeField] private AudioSource sfxAudio;
     [FoldoutGroup("SFX Sound")][SerializeField] private AudioClip clipGotItem;

@@ -43,7 +43,7 @@ public class GridManagement : MonoBehaviour
             listDigArea.Add(prefab);
             digArea = prefab;
         }
-        Vector3 digareapos = new Vector3(pos.x, transPlayer.position.y, pos.z);
+        Vector3 digareapos = new Vector3(worldPos.x, transPlayer.position.y, worldPos.z);
         digArea.transform.SetPositionAndRotation(digareapos, Quaternion.identity);
         digArea.SetActive(true);
         listGridData.Add(new GridData(pos, worldPos, digArea, false));

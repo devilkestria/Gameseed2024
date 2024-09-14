@@ -256,6 +256,10 @@ public class BasicPlayerController : MonoBehaviour, IDamageable
     [FoldoutGroup("Attack")] private List<AudioClip> originalSfxAtk = new List<AudioClip>();
     [FoldoutGroup("Attack")] public UnityAction<AttackObject, float> eventOnChangeAttack;
     [FoldoutGroup("Attack")] public UnityAction eventActionAttack;
+    [FoldoutGroup("Attack")] private bool haveWood;
+    [FoldoutGroup("Attack")][SerializeField] private GameObject objWood;
+    [FoldoutGroup("Attack")] private bool haveShovel;
+    [FoldoutGroup("Attack")][SerializeField] private GameObject objShovel;
 
     public void OnChangeAttack(AttackObject atk, float prepareTime, float finishTime, List<AudioClip> audioatk)
     {
@@ -352,6 +356,20 @@ public class BasicPlayerController : MonoBehaviour, IDamageable
         }
         return null;
     }
+    public void ActiveWood()
+    {
+        haveWood = true;
+        haveShovel = false;
+        objWood.SetActive(true);
+        objShovel.SetActive(false);
+    }
+    public void ActiveShovel()
+    {
+        haveWood = false;
+        haveShovel = true;
+        objWood.SetActive(false);
+        objShovel.SetActive(true);
+    }
     #endregion
 
     #region Interact
@@ -387,9 +405,9 @@ public class BasicPlayerController : MonoBehaviour, IDamageable
     [FoldoutGroup("Grabing & Throw")] private WaitForSeconds wfsTimeGrabThrow;
     [FoldoutGroup("Grabing & Throw")] private WaitForSeconds wfsTimePlantSeed;
 
-    public void SetObjectGrab(GameObject grab)
+    public void SetObjectGrab(GameObject grab, UnityAction action)
     {
-        StartCoroutine(IeGrabThrow(true, grab));
+        StartCoroutine(IeGrabThrow(true, grab, action));
     }
     private void ThrowObject()
     {
@@ -404,11 +422,12 @@ public class BasicPlayerController : MonoBehaviour, IDamageable
                 return;
             }
         }
-        StartCoroutine(IeGrabThrow(false, null));
+        StartCoroutine(IeGrabThrow(false, null, null));
     }
-    IEnumerator IeGrabThrow(bool playerGrab, GameObject obj)
+    IEnumerator IeGrabThrow(bool playerGrab, GameObject obj, UnityAction action)
     {
         playerState = PlayerState.PlayerAction;
+        if (_hasAnimator) _animator.SetFloat(_animIDSpeed, 0);
         if (!onGrab) _animator.SetLayerWeight(1, 1);
         if (playerGrab)
             onGrab = true;
@@ -419,6 +438,7 @@ public class BasicPlayerController : MonoBehaviour, IDamageable
         }
         if (_hasAnimator) _animator.SetTrigger(playerGrab ? _animIDGrab : _animIDThrow);
         yield return wfsTimeGrabThrow;
+        action?.Invoke();
         if (!playerGrab) _animator.SetLayerWeight(1, 0);
         objGrab = obj;
         playerState = PlayerState.PlayerMoving;
@@ -584,10 +604,12 @@ public class BasicPlayerController : MonoBehaviour, IDamageable
     {
         if (_hasAnimator) _animator.SetTrigger(_animIDLookCamera);
         camZoomInFocusPlayer.Priority = value ? 2 : 0;
+        objWood.SetActive(!haveWood ? false : value ? false : true);
+        objShovel.SetActive(!haveShovel ? false : value ? false : true);
     }
     public void PlayerOnGetItem(bool value)
     {
-        if (_hasAnimator) _animator.SetBool(_animIDGotItem, value);
+        if (_hasAnimator) _animator.SetLayerWeight(3, value? 1:0);
     }
     #endregion
     #endregion
@@ -608,7 +630,6 @@ public class BasicPlayerController : MonoBehaviour, IDamageable
     private int _animIDHurt;
     private int _animIDRevive;
     private int _animIDLookCamera;
-    private int _animIDGotItem;
     private void AssignAnimationIDs()
     {
         _animIDSpeed = Animator.StringToHash("Speed");
@@ -623,8 +644,7 @@ public class BasicPlayerController : MonoBehaviour, IDamageable
         _animIdPlantSeed = Animator.StringToHash("Plant Seed");
         _animIDHurt = Animator.StringToHash("Hurt");
         _animIDRevive = Animator.StringToHash("Revive");
-        _animIDLookCamera = Animator.StringToHash("Look Camera");
-        _animIDGotItem = Animator.StringToHash("Got Item");
+        _animIDLookCamera = Animator.StringToHash("Turn Arround");
     }
     #endregion
 

@@ -22,9 +22,12 @@ public class GrabableInjection : IGrabable
     {
         rb.isKinematic = true;
         outlinable.enabled = false;
+        playerController.SetObjectGrab(transObject.gameObject, ObjectUp);
+    }
+    public void ObjectUp()
+    {
         transObject.parent = playerController.transGrab;
         transObject.localPosition = Vector3.zero;
         transObject.localRotation = Quaternion.identity;
-        playerController.SetObjectGrab(transObject.gameObject);
     }
 }

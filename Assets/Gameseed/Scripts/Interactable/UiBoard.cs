@@ -12,7 +12,7 @@ public class UiBoard : MonoBehaviour
     [FoldoutGroup("Ui Board")][SerializeField] private GameObject panelBoard;
     [FoldoutGroup("Ui Board")][SerializeField] private Image imgBoard;
     [FoldoutGroup("Ui Board")][SerializeField] private JVTextMeshProUGUI txtJava;
-    [FoldoutGroup("Ui Board")][SerializeField] private Button btnBoard;
+    [FoldoutGroup("Ui Board")] public Button btnBoard;
     [FoldoutGroup("Ui Board")][SerializeField] private BasicPlayerController playerController;
     private void Start()
     {

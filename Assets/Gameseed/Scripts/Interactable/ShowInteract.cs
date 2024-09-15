@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using EPOOutline;
 using UnityEngine;
 using UnityEngine.UI;
-[RequireComponent(typeof(Outlinable))]
 public class ShowInteract : MonoBehaviour
 {
     [SerializeField] private Outlinable outlinable;

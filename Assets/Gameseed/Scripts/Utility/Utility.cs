@@ -1,7 +1,7 @@
 using UnityEngine;
 
 public enum PlayerState { PlayerIddle, PlayerMoving, PlayerDodging, PlayerAttack, PlayerAction, PlayerPlayMusic, PlayerOnDamage }
-public enum EnemyState { EnemyWaiting, EnemyChasePlayer, EnemyBackToOriginPos, EnemyAttack, EnemyOnDamage, EnemyPatrol, EnemyDeath }
+public enum EnemyState { EnemyWaiting, EnemyChasePlayer, EnemyBackToOriginPos, EnemyAttack, EnemyOnDamage, EnemyPatrol, EnemyDeath, EnemyIddle }
 public enum TypeAttack { Slash, Impact }
 public static class Utility
 {

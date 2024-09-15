@@ -29,7 +29,7 @@ public class Seed : MonoBehaviour, IInteractable, IThrowable, IDamageable, IMusi
     [FoldoutGroup("Plant")] public bool onPlant;
     [FoldoutGroup("Plant")][SerializeField] private GridManagement gridManagement => GameplayManager.instance.gridManagement;
     [FoldoutGroup("Plant")][SerializeField] private Grid grid => gridManagement.grid;
-    [FoldoutGroup("Plant")][SerializeField] private int indexGrid;
+    [FoldoutGroup("Plant")]public int indexGrid;
     private void Start()
     {
         if (!outlinable) outlinable = GetComponent<Outlinable>();

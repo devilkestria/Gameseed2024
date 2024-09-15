@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
 using Sirenix.OdinInspector;
+using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -36,8 +37,8 @@ public class BasicPlayerController : MonoBehaviour, IDamageable
         _hasAnimator = _animator != null ? true : false;
         if (!rb) rb = GetComponent<Rigidbody>();
         AssignAnimationIDs();
+        CheckWeapon();
     }
-
     private void Update()
     {
         GroundedCheck();
@@ -146,6 +147,8 @@ public class BasicPlayerController : MonoBehaviour, IDamageable
     [Tooltip("How fast the character turns to face movement direction")]
     [FoldoutGroup("Player Movement")] public float RotateOnMove = 360f;
     [FoldoutGroup("Player Movement")][SerializeField] private Transform transCamera;
+    [FoldoutGroup("Player Movement")][SerializeField] private float maxSlopeAngle;
+    [FoldoutGroup("Player Movement")] bool isMovingDownhill;
     private void PlayerMove()
     {
         Vector2 inputmove = moveAction.ReadValue<Vector2>();
@@ -161,12 +164,42 @@ public class BasicPlayerController : MonoBehaviour, IDamageable
 
             // Slope Fix
             RaycastHit hit;
-            if (Physics.Raycast(transform.position - (GroundedOffset * Vector3.up), Vector3.down, out hit, 0.2f))
-                movement = Vector3.ProjectOnPlane(movement, hit.normal);
+            if (Physics.Raycast(transform.position + Vector3.up * 0.1f, Vector3.down, out hit, 1.5f, GroundLayers))
+            {
+                // movement = Vector3.ProjectOnPlane(movement, hit.normal);
+                float slopeAngle = Vector3.Angle(hit.normal, Vector3.up);
+                Debug.Log(slopeAngle);
+                Vector3 slopeDownDirection = Vector3.Cross(Vector3.Cross(hit.normal, Vector3.down), hit.normal).normalized;
+
+                // Check if player is moving downhill
+                float dotProduct = Vector3.Dot(movement.normalized, slopeDownDirection);
+                isMovingDownhill = dotProduct > 0;
+
+                // Only move if the slope angle is below maxSlopeAngle
+                if (slopeAngle <= maxSlopeAngle)
+                {
+                    // Project movement vector onto the slope
+                    movement = Vector3.ProjectOnPlane(movement, hit.normal);
+                }
+                else
+                {
+                    // Nullify movement if slope is too steep
+                    movement = Vector3.zero;
+                }
+
+                // Apply a custom force to counteract sliding
+                Vector3 slopeDirection = Vector3.Cross(Vector3.Cross(hit.normal, Vector3.down), hit.normal);
+                if (slopeAngle > 0 && !isMovingDownhill)
+                    rb.AddForce(-slopeDirection * speed * 3, ForceMode.Acceleration);
+            }
         }
         //Move Position
         rb.MovePosition(transform.position + movement);
         if (_hasAnimator) _animator.SetFloat(_animIDSpeed, moveDirection.magnitude);
+    }
+    public void ChangeCamera(Transform cameratarget)
+    {
+        transCamera = cameratarget;
     }
     #endregion
 
@@ -260,6 +293,13 @@ public class BasicPlayerController : MonoBehaviour, IDamageable
     [FoldoutGroup("Attack")][SerializeField] private GameObject objWood;
     [FoldoutGroup("Attack")] private bool haveShovel;
     [FoldoutGroup("Attack")][SerializeField] private GameObject objShovel;
+    void CheckWeapon()
+    {
+        if (prefabAttack)
+        {
+            SetAttack(prefabAttack, timePrepareAttack, timeFinishAttack, listSfxAttack);
+        }
+    }
 
     public void OnChangeAttack(AttackObject atk, float prepareTime, float finishTime, List<AudioClip> audioatk)
     {
@@ -369,6 +409,11 @@ public class BasicPlayerController : MonoBehaviour, IDamageable
         haveShovel = true;
         objWood.SetActive(false);
         objShovel.SetActive(true);
+    }
+    public void ActiveWeaponObj(bool value)
+    {
+        objWood.SetActive(!haveWood ? false : value ? true : false);
+        objShovel.SetActive(!haveWood ? false : value ? true : false);
     }
     #endregion
 
@@ -525,6 +570,7 @@ public class BasicPlayerController : MonoBehaviour, IDamageable
     [FoldoutGroup("Play Music")] public UnityAction eventOnAddMusic;
     [FoldoutGroup("Play Music")] public UnityAction eventActionMusic;
     [FoldoutGroup("Play Music")] public UnityAction<bool> eventOnChangeMusic;
+    [FoldoutGroup("Play Music")][SerializeField] private GameObject objPuiPui;
     public void AddNewMusic(MusicData data)
     {
         listDataMusic.Add(data);
@@ -541,14 +587,19 @@ public class BasicPlayerController : MonoBehaviour, IDamageable
     IEnumerator IePlayMusic()
     {
         eventActionMusic?.Invoke();
+        ActiveWeaponObj(false);
+        objPuiPui.SetActive(true);
         playerState = PlayerState.PlayerPlayMusic;
         if (_hasAnimator) _animator.SetLayerWeight(2, 1);
         sfxAudioSource.PlayOneShot(listDataMusic[indexPlayMusic].audioClip);
         yield return wfsTimeDurationPlaySound;
+        ActiveWeaponObj(true);
+        objPuiPui.SetActive(false);
         if (_hasAnimator) _animator.SetLayerWeight(2, 0);
-        Collider[] hits = Physics.OverlapSphere(transform.position, musicableRadius, layerInteractable);
+        Collider[] hits = Physics.OverlapSphere(transform.position, musicableRadius, musicableLayer);
         foreach (var hitcollider in hits)
         {
+            Debug.Log(hitcollider.name);
             IMusicable musicable = hitcollider.GetComponent<IMusicable>();
             if (musicable != null) musicable.Music(listDataMusic[indexPlayMusic]);
         }
@@ -607,9 +658,16 @@ public class BasicPlayerController : MonoBehaviour, IDamageable
         objWood.SetActive(!haveWood ? false : value ? false : true);
         objShovel.SetActive(!haveShovel ? false : value ? false : true);
     }
+    public void CamOnGetPuiPui(bool value)
+    {
+        if (_hasAnimator) _animator.SetTrigger(_animIDLookCamera);
+        camZoomInFocusPlayer.Priority = value ? 2 : 0;
+        objPuiPui.SetActive(value);
+        ActiveWeaponObj(!value);
+    }
     public void PlayerOnGetItem(bool value)
     {
-        if (_hasAnimator) _animator.SetLayerWeight(3, value? 1:0);
+        if (_hasAnimator) _animator.SetLayerWeight(3, value ? 1 : 0);
     }
     #endregion
     #endregion

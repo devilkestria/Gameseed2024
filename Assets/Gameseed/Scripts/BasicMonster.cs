@@ -35,6 +35,10 @@ public class BasicMonster : MonoBehaviour, IDamageable, IDeathable
         wfsTimeDurationDamage = new WaitForSeconds(timeDurationDamage);
         wfsTimeDurationDeath = new WaitForSeconds(timeDurationDeath);
     }
+    public void ChangeState(EnemyState enemyState)
+    {
+        state = enemyState;
+    }
     private void Start()
     {
         if (!target) target = GameplayManager.instance.playerObj.transform;

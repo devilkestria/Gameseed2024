@@ -19,6 +19,11 @@ public class GameplayManager : MonoBehaviour
     {
         playerObj = player;
     }
+    public GameObject cameraPlayerObj;
+    public void SetCameraPlayer(GameObject cameraPlayer)
+    {
+        cameraPlayerObj = cameraPlayer;
+    }
 
     [FoldoutGroup("Object Pulling")] public List<BasicPlant> listPlantSeed = new List<BasicPlant>();
     [FoldoutGroup("Object Pulling")] public List<Seed> listSeed = new List<Seed>();

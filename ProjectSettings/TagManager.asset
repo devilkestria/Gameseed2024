@@ -11,6 +11,7 @@ TagManager:
   - Ground
   - Seed
   - Plant
+  - PlayerCam
   layers:
   - Default
   - TransparentFX

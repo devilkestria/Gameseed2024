@@ -572,6 +572,10 @@ PrefabInstance:
       value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 3795064631769525014, guid: 8a03800bdf769294387f358dff7bd6b8, type: 3}
+      propertyPath: bodyCollider
+      value: 
+      objectReference: {fileID: 8343235200783545421}
+    - target: {fileID: 3795064631769525014, guid: 8a03800bdf769294387f358dff7bd6b8, type: 3}
       propertyPath: patrolRadius
       value: 10
       objectReference: {fileID: 0}
@@ -919,5 +923,10 @@ PrefabInstance:
 --- !u!4 &3576400661889022980 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5190493046127613933, guid: 8a03800bdf769294387f358dff7bd6b8, type: 3}
+  m_PrefabInstance: {fileID: 8766741116349295593}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &8343235200783545421 stripped
+BoxCollider:
+  m_CorrespondingSourceObject: {fileID: 747765407644082084, guid: 8a03800bdf769294387f358dff7bd6b8, type: 3}
   m_PrefabInstance: {fileID: 8766741116349295593}
   m_PrefabAsset: {fileID: 0}

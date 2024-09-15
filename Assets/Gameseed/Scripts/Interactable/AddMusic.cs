@@ -1,6 +1,7 @@
 using EPOOutline;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class AddMusic : MonoBehaviour, IInteractable
 {
@@ -10,7 +11,8 @@ public class AddMusic : MonoBehaviour, IInteractable
     [FoldoutGroup("Add Music")][SerializeField] private LayerMask layerInteract;
     [FoldoutGroup("Add Music")][SerializeField] private GameObject objInteract;
     [FoldoutGroup("Add Music")][SerializeField] private Outlinable outlinable;
-    
+    [FoldoutGroup("Add Music")][SerializeField] private UnityEvent eventOnGetMusic;
+
     private void Start()
     {
         if (!outlinable) outlinable = GetComponent<Outlinable>();
@@ -21,6 +23,7 @@ public class AddMusic : MonoBehaviour, IInteractable
     {
         playerController.AddNewMusic(musicData);
         gameObject.SetActive(false);
+        eventOnGetMusic?.Invoke();
     }
 
     private void Update()

@@ -69,6 +69,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 415940855894108281, guid: 817b2574b6d27a1418799919de5302b4, type: 3}
+      propertyPath: bodyCollider
+      value: 
+      objectReference: {fileID: 747765407644082084}
+    - target: {fileID: 415940855894108281, guid: 817b2574b6d27a1418799919de5302b4, type: 3}
       propertyPath: patrolRadius
       value: 8
       objectReference: {fileID: 0}

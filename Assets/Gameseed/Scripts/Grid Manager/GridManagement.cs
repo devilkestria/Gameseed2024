@@ -27,10 +27,10 @@ public class GridManagement : MonoBehaviour
     [FoldoutGroup("Grid Management")] public List<GameObject> listDigArea;
     [FoldoutGroup("Grid Management")][SerializeField] private GameObject prefabDigArea;
     [FoldoutGroup("Grid Management")][SerializeField] private Transform transPlayer;
-    [FoldoutGroup("Grid Management")]public UnityAction<Vector3Int> eventOnDigging;
+    [FoldoutGroup("Grid Management")] public UnityAction<Vector3Int> eventOnDigging;
     void Start()
     {
-        if(!transPlayer) transPlayer = GameplayManager.instance.playerObj.transform;
+        if (!transPlayer) transPlayer = GameplayManager.instance.playerObj.transform;
     }
 
     public void AddAreaData(Vector3Int pos)
@@ -46,7 +46,7 @@ public class GridManagement : MonoBehaviour
         Vector3 digareapos = new Vector3(worldPos.x, transPlayer.position.y, worldPos.z);
         digArea.transform.SetPositionAndRotation(digareapos, Quaternion.identity);
         digArea.SetActive(true);
-        listGridData.Add(new GridData(pos, worldPos, digArea, false));
+        listGridData.Add(new GridData(pos, digareapos, digArea, false));
         eventOnDigging?.Invoke(pos);
     }
     public void RemoveAreaData(int index)
@@ -58,6 +58,7 @@ public class GridManagement : MonoBehaviour
     }
     public void PlantSeed(int index, Seed seed)
     {
+        seed.indexGrid = index;
         listGridData[index].seed = seed;
         listGridData[index].isOcupied = true;
     }
